@@ -44,6 +44,15 @@ public class OrderEntity {
     @NotNull
     private String seat;
 
+    @NotNull
+    private double price;
+
+    @NotNull
+    private double consumeMileagePoints;
+
+    @NotNull
+    private double generateMileagePoints;
+
     @CreationTimestamp
     private Date createdAt;
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.fffd.l23o6.pojo.enum_.PaymentType;
 import org.fffd.l23o6.pojo.vo.order.CreateOrderRequest;
 import org.fffd.l23o6.pojo.vo.order.OrderIdVO;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
@@ -41,20 +42,33 @@ public class OrderController {
         return CommonResponse.success(orderService.getOrder(orderId));
     }
 
-    @PatchMapping("order/{orderId}")
-    public CommonResponse<?> patchOrder(@PathVariable("orderId") Long orderId, @Valid @RequestBody PatchOrderRequest request) {
+//    @PatchMapping("order/{orderId}")
+//    public CommonResponse<?> patchOrder(@PathVariable("orderId") Long orderId, @Valid @RequestBody PatchOrderRequest request) {
+//
+//        switch (request.getStatus()) {
+//            case PAID:
+//                orderService.payOrder(orderId);
+//                break;
+//            case CANCELLED:
+//                orderService.cancelOrder(orderId);
+//                break;
+//            default:
+//                throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "Invalid order status.");
+//        }
+//
+//        return CommonResponse.success();
+//    }
 
-        switch (request.getStatus()) {
-            case PAID:
-                orderService.payOrder(orderId);
-                break;
-            case CANCELLED:
-                orderService.cancelOrder(orderId);
-                break;
-            default:
-                throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "Invalid order status.");
-        }
-
+    @PostMapping("order/{orderId}")
+    public CommonResponse<?> payOrder(@PathVariable("orderId") Long orderId,@RequestParam("type") PaymentType type) {
+        orderService.payOrder(orderId,type);
         return CommonResponse.success();
     }
+
+    @PatchMapping("order/{orderId}")
+    public CommonResponse<?> cancelOrder(@PathVariable("orderId") Long orderId) {
+        orderService.cancelOrder(orderId);
+        return CommonResponse.success();
+    }
+
 }

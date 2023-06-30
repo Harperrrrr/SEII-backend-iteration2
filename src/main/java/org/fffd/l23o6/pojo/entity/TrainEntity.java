@@ -57,6 +57,12 @@ public class TrainEntity {
     @NotNull
     private List<String> extraInfos;
 
+    @NotNull
+    private int mileagePoint = 100;
+
+    @NotNull
+    private double price = 100.0;
+
     @CreationTimestamp
     private Date createdAt;
 

@@ -2,6 +2,7 @@ package org.fffd.l23o6.service;
 
 import java.util.List;
 
+import org.fffd.l23o6.pojo.enum_.PaymentType;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
 
 public interface OrderService {
@@ -10,5 +11,5 @@ public interface OrderService {
     OrderVO getOrder(Long id);
 
     void cancelOrder(Long id);
-    void payOrder(Long id);
+    void payOrder(Long id, PaymentType type);
 }
