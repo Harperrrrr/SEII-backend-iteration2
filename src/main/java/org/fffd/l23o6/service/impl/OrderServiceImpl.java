@@ -115,9 +115,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // TODO: refund user's money and credits if needed
-//        UserEntity user = userDao.findById(order.getUserId()).get();
-//        user.setMileagePoints(user.getMileagePoints() + order.getMileagePoint());
-//        userDao.save(user);
+        if (order.getStatus() == OrderStatus.PAID) {
+            // refund credits
+            UserEntity user = userDao.findById(order.getUserId()).get();
+            user.setMileagePoints((int)(user.getMileagePoints() + order.getConsumeMileagePoints()));
+            userDao.save(user);
+
+            // refund money
+            PaymentType type = order.getPaymentType();
+            switch (type){
+                case Alipay:
+                    AlipayPaymentStrategy.INSTANCE.refund(order.getPrice());
+                    break;
+                case WeChat:
+                    WeChatPaymentStrategy.INSTANCE.refund(order.getPrice());
+                    break;
+            }
+        }
 
         order.setStatus(OrderStatus.CANCELLED);
         orderDao.save(order);
@@ -125,6 +139,8 @@ public class OrderServiceImpl implements OrderService {
 
     public void payOrder(Long id, PaymentType type) {
         OrderEntity order = orderDao.findById(id).get();
+
+        order.setPaymentType(type);
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);

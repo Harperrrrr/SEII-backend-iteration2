@@ -1,6 +1,8 @@
 package org.fffd.l23o6.controller;
 
 import java.util.List;
+
+import io.github.lyc8503.spring.starter.incantation.exception.BizException;
 import io.github.lyc8503.spring.starter.incantation.pojo.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,18 @@ public class StationController {
     @PostMapping("admin/station")
     public CommonResponse<?> addStation(@Valid @RequestBody AddStationRequest request) {
         // Throws BizException if add failed.
-        stationService.addStation(request.getName());
-        return CommonResponse.success();
+        try {
+            stationService.addStation(request.getName());
+            return CommonResponse.success();
+        } catch (Exception ex) {
+            if (ex instanceof BizException) {
+                // 业务异常，将异常信息构造为CommonResponse对象返回
+                return CommonResponse.error((BizException) ex);
+            } else {
+                // 非业务异常，抛出原始异常信息
+                throw ex;
+            }
+        }
     }
 
     @PutMapping("admin/station/{stationId}")
