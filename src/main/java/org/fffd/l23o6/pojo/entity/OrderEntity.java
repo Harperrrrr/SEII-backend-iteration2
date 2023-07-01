@@ -46,7 +46,10 @@ public class OrderEntity {
     private String seat;
 
     @NotNull
-    private double price;
+    private double originalPrice;
+
+    @NotNull
+    private double caculatedPrice;
 
     @NotNull
     private PaymentType paymentType;
