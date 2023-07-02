@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MyMapper {
+public class MyTrainMapper {
     private final RouteDao routeDao;
 
     public TrainVO toTrainVO(TrainEntity TrainEntity,Long startStationId,Long endStationId) {

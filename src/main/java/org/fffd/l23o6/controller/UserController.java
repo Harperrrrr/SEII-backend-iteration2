@@ -5,6 +5,7 @@ import io.github.lyc8503.spring.starter.incantation.exception.BizException;
 import io.github.lyc8503.spring.starter.incantation.pojo.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.fffd.l23o6.mapper.MyUserMapper;
 import org.fffd.l23o6.mapper.UserMapper;
 import org.fffd.l23o6.pojo.vo.user.EditUserInfoRequest;
 import org.fffd.l23o6.pojo.vo.user.LoginRequest;
@@ -63,7 +64,7 @@ public class UserController {
     @GetMapping("user")
     public CommonResponse<UserVO> userInfo() {
         StpUtil.checkLogin();
-        return CommonResponse.success(UserMapper.INSTANCE.toUserVO(userService.findByUserName(String.valueOf(StpUtil.getLoginId()))));
+        return CommonResponse.success(MyUserMapper.toUserVO(userService.findByUserName(String.valueOf(StpUtil.getLoginId()))));
     }
 
     @PutMapping("user")

@@ -8,14 +8,13 @@ import java.util.stream.Collectors;
 
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
-import org.fffd.l23o6.mapper.MyMapper;
+import org.fffd.l23o6.mapper.MyTrainMapper;
 import org.fffd.l23o6.mapper.TrainMapper;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 import org.fffd.l23o6.pojo.enum_.TrainType;
 import org.fffd.l23o6.pojo.vo.train.AdminTrainVO;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
-import org.fffd.l23o6.pojo.vo.train.TicketInfo;
 import org.fffd.l23o6.pojo.vo.train.TrainDetailVO;
 import org.fffd.l23o6.service.TrainService;
 import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
@@ -32,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class TrainServiceImpl implements TrainService {
     private final TrainDao trainDao;
     private final RouteDao routeDao;
-    private final MyMapper myMapper;
+    private final MyTrainMapper myTrainMapper;
     @Override
     public TrainDetailVO getTrain(Long trainId) {
         TrainEntity train = trainDao.findById(trainId).get();
@@ -78,7 +77,7 @@ public class TrainServiceImpl implements TrainService {
                         && calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH);
 
                 if(sameDay){
-                    result.add(myMapper.toTrainVO(train,startStationId,endStationId));
+                    result.add(myTrainMapper.toTrainVO(train,startStationId,endStationId));
                 }
             }
         }
