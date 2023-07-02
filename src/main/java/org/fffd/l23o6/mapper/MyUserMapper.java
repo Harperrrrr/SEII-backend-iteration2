@@ -13,15 +13,16 @@ public class MyUserMapper {
             return null;
         }
 
-        UserVO userVO = new UserVO();
+        UserVO.UserVOBuilder userVO = UserVO.builder();
 
-        userVO.setUsername( userEntity.getUsername() );
-        userVO.setName( userEntity.getName() );
-        userVO.setPhone( userEntity.getPhone() );
-        userVO.setIdn( userEntity.getIdn() );
-        userVO.setType( userEntity.getType() );
-        userVO.setMileagePoints(userVO.getMileagePoints());
+        userVO.username( userEntity.getUsername() );
+        userVO.name( userEntity.getName() );
+        userVO.phone( userEntity.getPhone() );
+        userVO.idn( userEntity.getIdn() );
+        userVO.type( userEntity.getType() );
+        userVO.mileagePoints(userEntity.getMileagePoints());
 
-        return userVO;
+        return userVO.build();
+
     }
 }
