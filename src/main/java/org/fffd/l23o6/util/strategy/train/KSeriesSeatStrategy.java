@@ -13,7 +13,7 @@ public class KSeriesSeatStrategy extends TrainSeatStrategy {
     private final Map<Integer, String> SOFT_SEAT_MAP = new HashMap<>();
     private final Map<Integer, String> HARD_SEAT_MAP = new HashMap<>();
 
-    private final Map<KSeriesSeatType, Map<Integer, String>> TYPE_MAP = new HashMap<>() {{
+    public final Map<KSeriesSeatType, Map<Integer, String>> TYPE_MAP = new HashMap<>() {{
         put(KSeriesSeatType.SOFT_SLEEPER_SEAT, SOFT_SLEEPER_SEAT_MAP);
         put(KSeriesSeatType.HARD_SLEEPER_SEAT, HARD_SLEEPER_SEAT_MAP);
         put(KSeriesSeatType.SOFT_SEAT, SOFT_SEAT_MAP);

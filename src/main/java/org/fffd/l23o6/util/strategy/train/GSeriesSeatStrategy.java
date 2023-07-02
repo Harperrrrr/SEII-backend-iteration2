@@ -12,7 +12,7 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
     private final Map<Integer, String> FIRST_CLASS_SEAT_MAP = new HashMap<>();
     private final Map<Integer, String> SECOND_CLASS_SEAT_MAP = new HashMap<>();
 
-    private final Map<GSeriesSeatType, Map<Integer, String>> TYPE_MAP = new HashMap<>() {{
+    public final Map<GSeriesSeatType, Map<Integer, String>> TYPE_MAP = new HashMap<>() {{
         put(GSeriesSeatType.BUSINESS_SEAT, BUSINESS_SEAT_MAP);
         put(GSeriesSeatType.FIRST_CLASS_SEAT, FIRST_CLASS_SEAT_MAP);
         put(GSeriesSeatType.SECOND_CLASS_SEAT, SECOND_CLASS_SEAT_MAP);
