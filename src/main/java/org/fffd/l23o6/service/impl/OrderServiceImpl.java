@@ -175,5 +175,4 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.COMPLETED);
         orderDao.save(order);
     }
-
 }
