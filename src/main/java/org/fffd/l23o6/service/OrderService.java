@@ -11,5 +11,5 @@ public interface OrderService {
     OrderVO getOrder(Long id);
 
     void cancelOrder(Long id);
-    void payOrder(Long id, PaymentType type);
+    void payOrder(Long id, int type);
 }
