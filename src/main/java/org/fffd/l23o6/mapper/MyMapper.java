@@ -1,5 +1,7 @@
 package org.fffd.l23o6.mapper;
 
+import org.fffd.l23o6.dao.RouteDao;
+import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 import org.fffd.l23o6.pojo.vo.train.TicketInfo;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
@@ -9,10 +11,15 @@ import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyMapper {
-    public static MyMapper INSTANCE = new MyMapper();
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-    public TrainVO toTrainVO(TrainEntity TrainEntity) {
+@Service
+@RequiredArgsConstructor
+public class MyMapper {
+    private final RouteDao routeDao;
+
+    public TrainVO toTrainVO(TrainEntity TrainEntity,Long startStationId,Long endStationId) {
         if (TrainEntity == null) {
             return null;
         }
@@ -47,6 +54,16 @@ public class MyMapper {
             }
         }
         trainVO.ticketInfo(infos);
+
+        RouteEntity route = routeDao.findById(TrainEntity.getRouteId()).get();
+        trainVO.startStationId(startStationId);
+        trainVO.endStationId(endStationId);
+
+        int startIdx = route.getStationIds().indexOf(startStationId);
+        int endIdx = route.getStationIds().indexOf(endStationId);
+        trainVO.arrivalTime(TrainEntity.getArrivalTimes().get(startIdx));
+        trainVO.departureTime(TrainEntity.getDepartureTimes().get(endIdx));
+
         return trainVO.build();
     }
 

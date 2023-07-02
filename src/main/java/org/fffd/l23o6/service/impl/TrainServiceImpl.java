@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class TrainServiceImpl implements TrainService {
     private final TrainDao trainDao;
     private final RouteDao routeDao;
-
+    private final MyMapper myMapper;
     @Override
     public TrainDetailVO getTrain(Long trainId) {
         TrainEntity train = trainDao.findById(trainId).get();
@@ -55,7 +55,7 @@ public class TrainServiceImpl implements TrainService {
         List<TrainEntity> trains = trainDao.findAll();
         for (TrainEntity train : trains) {
             if (routeIds.contains(train.getRouteId())) {
-                result.add(MyMapper.INSTANCE.toTrainVO(train));
+                result.add(myMapper.toTrainVO(train,startStationId,endStationId));
             }
         }
         return result;
