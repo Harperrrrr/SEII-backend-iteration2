@@ -50,7 +50,8 @@ public class TrainServiceImpl implements TrainService {
         List<Long> routeIds = new ArrayList<>();
         for (RouteEntity route : routes) {
             if (route.getStationIds().contains(startStationId)
-                    && route.getStationIds().contains(endStationId)) {
+                    && route.getStationIds().contains(endStationId)
+                    && route.getStationIds().indexOf(startStationId) < route.getStationIds().indexOf(endStationId)) {
                 routeIds.add(route.getId());
             }
         }
