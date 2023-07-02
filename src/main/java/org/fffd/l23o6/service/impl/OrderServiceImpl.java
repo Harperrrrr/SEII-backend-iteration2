@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final TrainDao trainDao;
     private final RouteDao routeDao;
 
-    private final Integer moneyPerStation = 50;
+    private Integer moneyPerStation = 50;
 
     private final Integer mileAgePointsPerStation = 200;
 
@@ -44,20 +44,63 @@ public class OrderServiceImpl implements OrderService {
         Long userId = userDao.findByUsername(username).getId();
         TrainEntity train = trainDao.findById(trainId).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
+
         int startStationIndex = route.getStationIds().indexOf(fromStationId);
         int endStationIndex = route.getStationIds().indexOf(toStationId);
         int miles = endStationIndex - startStationIndex;
+
+        switch (seatType) {
+            case "软卧":
+                moneyPerStation = 250;
+                break;
+            case "硬卧":
+                moneyPerStation = 200;
+                break;
+            case "软座":
+                moneyPerStation = 150;
+                break;
+            case "硬座":
+                moneyPerStation = 100;
+                break;
+            case "商务座":
+                moneyPerStation = 200;
+                break;
+            case "一等座":
+                moneyPerStation = 150;
+                break;
+            case "二等座":
+                moneyPerStation = 100;
+                break;
+            case "无座":
+                moneyPerStation = 50;
+                break;
+        }
         String seat = null;
         int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
             case HIGH_SPEED:
                 seat = GSeriesSeatStrategy.INSTANCE.allocSeat(startStationIndex, endStationIndex,
                         GSeriesSeatStrategy.GSeriesSeatType.fromString(seatType), train.getSeats());
-                originalPrice *= 1.5;
+                if (seatType.equals("无座")) {
+                    train.noSeatNum--;
+                } else {
+                    int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+                    for (int i = startStationIndex; i < endStationIndex; ++i) {
+                        train.seats[i][count] = true;
+                    }
+                }
                 break;
             case NORMAL_SPEED:
                 seat = KSeriesSeatStrategy.INSTANCE.allocSeat(startStationIndex, endStationIndex,
                         KSeriesSeatStrategy.KSeriesSeatType.fromString(seatType), train.getSeats());
+                if (seatType.equals("无座")) {
+                    train.noSeatNum--;
+                } else {
+                    int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+                    for (int i = startStationIndex; i < endStationIndex; ++i) {
+                        train.seats[i][count] = true;
+                    }
+                }
                 break;
         }
         if (seat == null) {
@@ -65,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         UserEntity user = userDao.findByUsername(username);
-        double result[] = DiscountStrategy.INSTANCE.getDiscountWithPoints(user.getMileagePoints(),originalPrice);
+        double result[] = DiscountStrategy.INSTANCE.getDiscountWithPoints(user.getMileagePoints(), originalPrice);
 
         OrderEntity order = OrderEntity.builder().trainId(trainId).userId(userId).seat(seat).originalPrice(originalPrice)
                 .caculatedPrice(originalPrice - result[0])
@@ -117,6 +160,23 @@ public class OrderServiceImpl implements OrderService {
 
     public void cancelOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();
+        String seat = order.getSeat();
+        TrainEntity train = trainDao.findById(order.getTrainId()).get();
+        RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        int startStationIndex = route.getStationIds().indexOf(order.getDepartureStationId());
+        int endStationIndex = route.getStationIds().indexOf(order.getArrivalStationId());
+
+        if(train.getTrainType().getText().equals("高铁")){
+            int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int i = startStationIndex; i < endStationIndex; ++i) {
+                train.seats[i][count] = false;
+            }
+        }else{
+            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int i = startStationIndex; i < endStationIndex; ++i) {
+                train.seats[i][count] = false;
+            }
+        }
 
         if (order.getStatus() == OrderStatus.COMPLETED || order.getStatus() == OrderStatus.CANCELLED) {
             throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);
@@ -126,12 +186,12 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() == OrderStatus.PAID) {
             // refund credits
             UserEntity user = userDao.findById(order.getUserId()).get();
-            user.setMileagePoints((int)(user.getMileagePoints() + order.getConsumeMileagePoints()));
+            user.setMileagePoints((int) (user.getMileagePoints() + order.getConsumeMileagePoints()));
             userDao.save(user);
 
             // refund money
             PaymentType type = order.getPaymentType();
-            switch (type){
+            switch (type) {
                 case Alipay:
                     AlipayPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
                     break;

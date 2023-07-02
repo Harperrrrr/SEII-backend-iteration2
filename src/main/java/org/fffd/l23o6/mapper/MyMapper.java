@@ -10,6 +10,7 @@ import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,34 +34,39 @@ public class MyMapper {
         }
 
         List<TicketInfo> infos = new ArrayList<>();
+
+        RouteEntity route = routeDao.findById(TrainEntity.getRouteId()).get();
+        int startIdx = route.getStationIds().indexOf(startStationId);
+        int endIdx = route.getStationIds().indexOf(endStationId);
+        int miles = endIdx - startIdx;
+
         if (TrainEntity.getTrainType().getText().equals("高铁")) {
             List<GSeriesSeatStrategy.GSeriesSeatType> types =
                     new ArrayList<>(GSeriesSeatStrategy.INSTANCE.TYPE_MAP.keySet());
-            int price = 150;
+            Map<GSeriesSeatStrategy.GSeriesSeatType, Integer> map
+                    = GSeriesSeatStrategy.INSTANCE.getLeftSeatCount(startIdx,endIdx,TrainEntity.getSeats());
             for (GSeriesSeatStrategy.GSeriesSeatType type : types) {
-                TicketInfo info = new TicketInfo(type.getText(), GSeriesSeatStrategy.INSTANCE.TYPE_MAP.get(type).size(), price);
+                TicketInfo info = new TicketInfo(type.getText(), map.get(type), miles*type.getMoneyPerStation());
                 infos.add(info);
-                price -= 50;
             }
-
+            TicketInfo info = new TicketInfo("无座", TrainEntity.noSeatNum, 50*miles);
+            infos.add(info);
         }else{
             List<KSeriesSeatStrategy.KSeriesSeatType> types =
                     new ArrayList<>(KSeriesSeatStrategy.INSTANCE.TYPE_MAP.keySet());
-            int price = 200;
+            Map<KSeriesSeatStrategy.KSeriesSeatType, Integer> map
+                    = KSeriesSeatStrategy.INSTANCE.getLeftSeatCount(startIdx,endIdx,TrainEntity.getSeats());
             for (KSeriesSeatStrategy.KSeriesSeatType type : types) {
-                TicketInfo info = new TicketInfo(type.getText(), KSeriesSeatStrategy.INSTANCE.TYPE_MAP.get(type).size(), price);
+                TicketInfo info = new TicketInfo(type.getText(), map.get(type), miles* type.getMoneyPerStation());
                 infos.add(info);
-                price -= 50;
             }
+            TicketInfo info = new TicketInfo("无座", TrainEntity.noSeatNum, 50*miles);
+            infos.add(info);
         }
         trainVO.ticketInfo(infos);
 
-        RouteEntity route = routeDao.findById(TrainEntity.getRouteId()).get();
         trainVO.startStationId(startStationId);
         trainVO.endStationId(endStationId);
-
-        int startIdx = route.getStationIds().indexOf(startStationId);
-        int endIdx = route.getStationIds().indexOf(endStationId);
         trainVO.departureTime(TrainEntity.getDepartureTimes().get(startIdx));
         trainVO.arrivalTime(TrainEntity.getArrivalTimes().get(endIdx));
 

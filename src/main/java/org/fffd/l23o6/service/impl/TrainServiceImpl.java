@@ -102,6 +102,7 @@ public class TrainServiceImpl implements TrainService {
             throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "列表长度错误");
         }
         entity.setExtraInfos(new ArrayList<String>(Collections.nCopies(route.getStationIds().size(), "预计正点")));
+        entity.setNoSeatNum(20);
         switch (entity.getTrainType()) {
             case HIGH_SPEED:
                 entity.setSeats(GSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
