@@ -1,9 +1,6 @@
 package org.fffd.l23o6.util.strategy.train;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import jakarta.annotation.Nullable;
 
@@ -66,12 +63,44 @@ public class KSeriesSeatStrategy extends TrainSeatStrategy {
 
 
     public @Nullable String allocSeat(int startStationIndex, int endStationIndex, KSeriesSeatType type, boolean[][] seatMap) {
-        //endStationIndex - 1 = upper bound
+        Map<Integer, String> map = TYPE_MAP.get(type);
+        List<Integer> seatCount = new ArrayList<>(map.keySet());
+        for (Integer i : seatCount) {
+            for (int j = startStationIndex; j < endStationIndex; j++) {
+                if (seatMap[j][i]) {
+                    break;
+                }
+                if (j == endStationIndex - 1) {
+                    for (int k = startStationIndex; k < endStationIndex - 1; k++) {
+                        seatMap[k][i] = true;
+                    }
+                    return map.get(i);
+                }
+            }
+        }
         return null;
     }
 
     public Map<KSeriesSeatType, Integer> getLeftSeatCount(int startStationIndex, int endStationIndex, boolean[][] seatMap) {
-        return null;
+        Map<KSeriesSeatStrategy.KSeriesSeatType, Integer> result = new HashMap<>();
+        List<KSeriesSeatStrategy.KSeriesSeatType> types = new ArrayList<>(TYPE_MAP.keySet());
+        for (KSeriesSeatStrategy.KSeriesSeatType type : types) {
+            Map<Integer, String> map = TYPE_MAP.get(type);
+            List<Integer> seatCount = new ArrayList<>(map.keySet());
+            int leftCount = 0;
+            for (Integer i : seatCount) {
+                for (int j = startStationIndex; j < endStationIndex; j++) {
+                    if (seatMap[j][i]) {
+                        break;
+                    }
+                    if(j == endStationIndex - 1){
+                        leftCount++;
+                    }
+                }
+            }
+            result.put(type, leftCount);
+        }
+        return result;
     }
 
     public boolean[][] initSeatMap(int stationCount) {

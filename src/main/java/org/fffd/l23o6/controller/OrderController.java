@@ -70,5 +70,4 @@ public class OrderController {
         orderService.cancelOrder(orderId);
         return CommonResponse.success();
     }
-
 }
