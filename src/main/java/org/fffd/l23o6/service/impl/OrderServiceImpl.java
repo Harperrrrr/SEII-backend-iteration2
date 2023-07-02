@@ -37,13 +37,14 @@ public class OrderServiceImpl implements OrderService {
 
     private Integer moneyPerStation = 50;
 
-    private final Integer mileAgePointsPerStation = 200;
+    private final Integer mileAgePointsPer = 1;
 
     public Long createOrder(String username, Long trainId, Long fromStationId, Long toStationId, String seatType,
                             Long seatNumber) {
-        Long userId = userDao.findByUsername(username).getId();
         TrainEntity train = trainDao.findById(trainId).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        UserEntity user = userDao.findByUsername(username);
+        Long userId = user.getId();
 
         int startStationIndex = route.getStationIds().indexOf(fromStationId);
         int endStationIndex = route.getStationIds().indexOf(toStationId);
@@ -107,18 +108,19 @@ public class OrderServiceImpl implements OrderService {
             throw new BizException(BizError.OUT_OF_SEAT);
         }
 
-        UserEntity user = userDao.findByUsername(username);
         double result[] = DiscountStrategy.INSTANCE.getDiscountWithPoints(user.getMileagePoints(), originalPrice);
 
         OrderEntity order = OrderEntity.builder().trainId(trainId).userId(userId).seat(seat).originalPrice(originalPrice)
                 .caculatedPrice(originalPrice - result[0])
-                .consumeMileagePoints(result[1])
-                .generateMileagePoints(miles * mileAgePointsPerStation)
+                .consumeMileagePoints((int) result[1])
+                .generateMileagePoints((int) (originalPrice - result[0]) * mileAgePointsPer)
                 .status(OrderStatus.PENDING_PAYMENT).arrivalStationId(toStationId).departureStationId(fromStationId)
                 .build();
         train.setUpdatedAt(null);// force it to update
         trainDao.save(train);
         orderDao.save(order);
+        user.setMileagePoints(order.getGenerateMileagePoints());
+        userDao.save(user);
         return order.getId();
     }
 
@@ -206,6 +208,8 @@ public class OrderServiceImpl implements OrderService {
         orderDao.save(order);
     }
 
+
+    @Override
     public void payOrder(Long id, int type) {
         OrderEntity order = orderDao.findById(id).get();
 

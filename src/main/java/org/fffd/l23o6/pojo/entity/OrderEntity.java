@@ -51,9 +51,9 @@ public class OrderEntity {
 
     private PaymentType paymentType;
 
-    private double consumeMileagePoints;
+    private int consumeMileagePoints;
 
-    private double generateMileagePoints;
+    private int generateMileagePoints;
 
     @CreationTimestamp
     private Date createdAt;
