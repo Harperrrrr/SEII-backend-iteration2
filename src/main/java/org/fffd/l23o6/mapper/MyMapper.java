@@ -61,8 +61,8 @@ public class MyMapper {
 
         int startIdx = route.getStationIds().indexOf(startStationId);
         int endIdx = route.getStationIds().indexOf(endStationId);
-        trainVO.arrivalTime(TrainEntity.getArrivalTimes().get(startIdx));
-        trainVO.departureTime(TrainEntity.getDepartureTimes().get(endIdx));
+        trainVO.departureTime(TrainEntity.getDepartureTimes().get(startIdx));
+        trainVO.arrivalTime(TrainEntity.getArrivalTimes().get(endIdx));
 
         return trainVO.build();
     }

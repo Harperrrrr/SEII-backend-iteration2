@@ -1,5 +1,8 @@
 package org.fffd.l23o6.service.impl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,7 +58,27 @@ public class TrainServiceImpl implements TrainService {
         List<TrainEntity> trains = trainDao.findAll();
         for (TrainEntity train : trains) {
             if (routeIds.contains(train.getRouteId())) {
-                result.add(myMapper.toTrainVO(train,startStationId,endStationId));
+                RouteEntity route = routeDao.findById(train.getRouteId()).get();
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date1;
+                try {
+                    date1 = dateFormat.parse(date);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                int startIdx = route.getStationIds().indexOf(startStationId);
+                Date date2 = train.getArrivalTimes().get(startIdx);
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.setTime(date1);
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(date2);
+                boolean sameDay = calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH)
+                        && calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH);
+
+                if(sameDay){
+                    result.add(myMapper.toTrainVO(train,startStationId,endStationId));
+                }
             }
         }
         return result;
