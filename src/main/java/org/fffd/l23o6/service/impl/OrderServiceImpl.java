@@ -35,6 +35,10 @@ public class OrderServiceImpl implements OrderService {
     private final TrainDao trainDao;
     private final RouteDao routeDao;
 
+    private final Integer moneyPerStation = 50;
+
+    private final Integer mileAgePointsPerStation = 200;
+
     public Long createOrder(String username, Long trainId, Long fromStationId, Long toStationId, String seatType,
                             Long seatNumber) {
         Long userId = userDao.findByUsername(username).getId();
@@ -42,11 +46,14 @@ public class OrderServiceImpl implements OrderService {
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         int startStationIndex = route.getStationIds().indexOf(fromStationId);
         int endStationIndex = route.getStationIds().indexOf(toStationId);
+        int miles = endStationIndex - startStationIndex;
         String seat = null;
+        int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
             case HIGH_SPEED:
                 seat = GSeriesSeatStrategy.INSTANCE.allocSeat(startStationIndex, endStationIndex,
                         GSeriesSeatStrategy.GSeriesSeatType.fromString(seatType), train.getSeats());
+                originalPrice *= 1.5;
                 break;
             case NORMAL_SPEED:
                 seat = KSeriesSeatStrategy.INSTANCE.allocSeat(startStationIndex, endStationIndex,
@@ -58,11 +65,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         UserEntity user = userDao.findByUsername(username);
-        double result[] = DiscountStrategy.INSTANCE.getDiscountWithPoints(user.getMileagePoints(),train.getPrice());
+        double result[] = DiscountStrategy.INSTANCE.getDiscountWithPoints(user.getMileagePoints(),originalPrice);
 
-        OrderEntity order = OrderEntity.builder().trainId(trainId).userId(userId).seat(seat).price(train.getPrice()-result[0])
+        OrderEntity order = OrderEntity.builder().trainId(trainId).userId(userId).seat(seat).originalPrice(originalPrice)
+                .caculatedPrice(originalPrice - result[0])
                 .consumeMileagePoints(result[1])
-                .generateMileagePoints(train.getMileagePoint())
+                .generateMileagePoints(miles * mileAgePointsPerStation)
                 .status(OrderStatus.PENDING_PAYMENT).arrivalStationId(toStationId).departureStationId(fromStationId)
                 .build();
         train.setUpdatedAt(null);// force it to update
@@ -125,10 +133,10 @@ public class OrderServiceImpl implements OrderService {
             PaymentType type = order.getPaymentType();
             switch (type){
                 case Alipay:
-                    AlipayPaymentStrategy.INSTANCE.refund(order.getPrice());
+                    AlipayPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
                     break;
                 case WeChat:
-                    WeChatPaymentStrategy.INSTANCE.refund(order.getPrice());
+                    WeChatPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
                     break;
             }
         }
@@ -151,10 +159,10 @@ public class OrderServiceImpl implements OrderService {
         //  use payment strategy to pay!
         switch (type) {
             case Alipay:
-                AlipayPaymentStrategy.INSTANCE.pay(order.getPrice());
+                AlipayPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
                 break;
             case WeChat:
-                WeChatPaymentStrategy.INSTANCE.pay(order.getPrice());
+                WeChatPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
                 break;
         }
         user.setMileagePoints((int) (user.getMileagePoints() - order.getConsumeMileagePoints()));
