@@ -6,7 +6,6 @@ import io.github.lyc8503.spring.starter.incantation.pojo.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.fffd.l23o6.mapper.MyUserMapper;
-import org.fffd.l23o6.mapper.UserMapper;
 import org.fffd.l23o6.pojo.vo.user.EditUserInfoRequest;
 import org.fffd.l23o6.pojo.vo.user.LoginRequest;
 import org.fffd.l23o6.pojo.vo.user.RegisterRequest;
