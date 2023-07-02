@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
         train.setUpdatedAt(null);// force it to update
         trainDao.save(train);
         orderDao.save(order);
-        user.setMileagePoints(order.getGenerateMileagePoints());
+        user.setMileagePoints(user.getMileagePoints() + order.getGenerateMileagePoints());
         userDao.save(user);
         return order.getId();
     }
