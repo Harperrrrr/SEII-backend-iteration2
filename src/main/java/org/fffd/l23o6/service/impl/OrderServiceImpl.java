@@ -165,7 +165,6 @@ public class OrderServiceImpl implements OrderService {
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         int startStationIndex = route.getStationIds().indexOf(order.getDepartureStationId());
         int endStationIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-
         if(train.getTrainType().getText().equals("高铁")){
             int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
             for (int i = startStationIndex; i < endStationIndex; ++i) {
@@ -200,6 +199,8 @@ public class OrderServiceImpl implements OrderService {
                     break;
             }
         }
+        train.setUpdatedAt(null);// force it to update
+        trainDao.save(train);
 
         order.setStatus(OrderStatus.CANCELLED);
         orderDao.save(order);
