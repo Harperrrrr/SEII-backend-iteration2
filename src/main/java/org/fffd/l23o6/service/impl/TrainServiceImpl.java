@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
+import org.fffd.l23o6.mapper.MyMapper;
 import org.fffd.l23o6.mapper.TrainMapper;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
@@ -54,7 +55,7 @@ public class TrainServiceImpl implements TrainService {
         List<TrainEntity> trains = trainDao.findAll();
         for (TrainEntity train : trains) {
             if (routeIds.contains(train.getRouteId())) {
-                result.add(TrainMapper.INSTANCE.toTrainVO(train));
+                result.add(MyMapper.INSTANCE.toTrainVO(train));
             }
         }
         return result;
