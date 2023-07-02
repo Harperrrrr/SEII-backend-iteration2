@@ -60,7 +60,7 @@ public class OrderController {
 //    }
 
     @PostMapping("order/{orderId}")
-    public CommonResponse<?> payOrder(@PathVariable("orderId") Long orderId,@RequestParam("type") PaymentType type) {
+    public CommonResponse<?> payOrder(@PathVariable("orderId") Long orderId,@RequestParam("type") int type) {
         orderService.payOrder(orderId,type);
         return CommonResponse.success();
     }

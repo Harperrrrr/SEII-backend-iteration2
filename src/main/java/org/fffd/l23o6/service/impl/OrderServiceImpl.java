@@ -145,10 +145,11 @@ public class OrderServiceImpl implements OrderService {
         orderDao.save(order);
     }
 
-    public void payOrder(Long id, PaymentType type) {
+    public void payOrder(Long id, int type) {
         OrderEntity order = orderDao.findById(id).get();
 
-        order.setPaymentType(type);
+        PaymentType pt = type == 0 ? PaymentType.Alipay : PaymentType.WeChat;
+        order.setPaymentType(pt);
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);
@@ -157,7 +158,7 @@ public class OrderServiceImpl implements OrderService {
         UserEntity user = userDao.findById(order.getUserId()).get();
 
         //  use payment strategy to pay!
-        switch (type) {
+        switch (pt) {
             case Alipay:
                 AlipayPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
                 break;
