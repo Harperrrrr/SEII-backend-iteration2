@@ -172,15 +172,17 @@ public class OrderServiceImpl implements OrderService {
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         int startStationIndex = route.getStationIds().indexOf(order.getDepartureStationId());
         int endStationIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-        if(train.getTrainType().getText().equals("高铁")){
-            int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
-            for (int i = startStationIndex; i < endStationIndex; ++i) {
-                train.seats[i][count] = false;
-            }
-        }else{
-            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
-            for (int i = startStationIndex; i < endStationIndex; ++i) {
-                train.seats[i][count] = false;
+        if(!seat.equals("无座")){
+            if(train.getTrainType().getText().equals("高铁")){
+                int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+                for (int i = startStationIndex; i < endStationIndex; ++i) {
+                    train.seats[i][count] = false;
+                }
+            }else{
+                int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+                for (int i = startStationIndex; i < endStationIndex; ++i) {
+                    train.seats[i][count] = false;
+                }
             }
         }
 
@@ -240,6 +242,8 @@ public class OrderServiceImpl implements OrderService {
 
         // update user's credits, so that user can get discount next time
         user.setMileagePoints((int) (user.getMileagePoints() + order.getGenerateMileagePoints()));
+        user.setUpdatedAt(null);// force it to update
+
         userDao.save(user);
 
         order.setStatus(OrderStatus.COMPLETED);
