@@ -1,6 +1,7 @@
 package org.fffd.l23o6.service;
 
 import org.fffd.l23o6.pojo.entity.UserEntity;
+import org.fffd.l23o6.pojo.vo.user.UserVO;
 
 public interface UserService {
     void login(String username, String password);
@@ -8,4 +9,7 @@ public interface UserService {
 
     UserEntity findByUserName(String username);
     void editInfo(String username, String name, String idn, String phone, String type);
+    UserVO getUser(String username);
+
+
 }

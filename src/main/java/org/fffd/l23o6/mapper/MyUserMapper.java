@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MyUserMapper {
-    public static UserVO toUserVO(UserEntity userEntity) {
+    public UserVO toUserVO(UserEntity userEntity) {
         if ( userEntity == null ) {
             return null;
         }
