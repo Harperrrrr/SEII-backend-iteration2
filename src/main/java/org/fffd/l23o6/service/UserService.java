@@ -10,6 +10,4 @@ public interface UserService {
     UserEntity findByUserName(String username);
     void editInfo(String username, String name, String idn, String phone, String type);
     UserVO getUser(String username);
-
-
 }

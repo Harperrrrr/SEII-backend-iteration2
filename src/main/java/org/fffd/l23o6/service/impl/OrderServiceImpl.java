@@ -18,7 +18,6 @@ import org.fffd.l23o6.pojo.vo.order.OrderVO;
 import org.fffd.l23o6.service.OrderService;
 import org.fffd.l23o6.util.strategy.DiscountStrategy;
 import org.fffd.l23o6.util.strategy.payment.AlipayPaymentStrategy;
-import org.fffd.l23o6.util.strategy.payment.PaymentStrategy;
 import org.fffd.l23o6.util.strategy.payment.WeChatPaymentStrategy;
 import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
 import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
@@ -134,6 +133,9 @@ public class OrderServiceImpl implements OrderService {
             int startIndex = route.getStationIds().indexOf(order.getDepartureStationId());
             int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
             return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
+                    .originalPrice(order.getOriginalPrice())
+                    .consumeMileagePoints(order.getConsumeMileagePoints())
+                    .caculatedPrice(order.getCaculatedPrice())
                     .seat(order.getSeat()).status(order.getStatus().getText())
                     .createdAt(order.getCreatedAt())
                     .startStationId(order.getDepartureStationId())
@@ -152,6 +154,9 @@ public class OrderServiceImpl implements OrderService {
         int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
         return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
                 .seat(order.getSeat()).status(order.getStatus().getText())
+                .originalPrice(order.getOriginalPrice())
+                .consumeMileagePoints(order.getConsumeMileagePoints())
+                .caculatedPrice(order.getCaculatedPrice())
                 .createdAt(order.getCreatedAt())
                 .startStationId(order.getDepartureStationId())
                 .endStationId(order.getArrivalStationId())
