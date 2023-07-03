@@ -21,7 +21,7 @@ public class DiscountStrategy {
         for (int i = 0; i < 5; i++) {
             if (mileagePoints > DISCOUNT_TABLE[i][0]) {
                 discount = DISCOUNT_TABLE[i][1] + (mileagePoints - DISCOUNT_TABLE[i][0]) * DISCOUNT_TABLE[i][2] * 0.01;
-                discount = (discount > DISCOUNT_TABLE[i][3]) ? DISCOUNT_TABLE[i][3] : discount;
+                discount = Math.min(discount, DISCOUNT_TABLE[i][3]);
                 if(discount > amount){
                     usedMileagePoints += (amount - DISCOUNT_TABLE[i][1]) / (DISCOUNT_TABLE[i][2] * 0.01);
                     break;

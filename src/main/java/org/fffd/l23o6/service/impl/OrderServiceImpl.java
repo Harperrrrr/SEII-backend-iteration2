@@ -18,6 +18,7 @@ import org.fffd.l23o6.pojo.vo.order.OrderVO;
 import org.fffd.l23o6.service.OrderService;
 import org.fffd.l23o6.util.strategy.DiscountStrategy;
 import org.fffd.l23o6.util.strategy.payment.AlipayPaymentStrategy;
+import org.fffd.l23o6.util.strategy.payment.PaymentStrategy;
 import org.fffd.l23o6.util.strategy.payment.WeChatPaymentStrategy;
 import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
 import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
@@ -118,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
         train.setUpdatedAt(null);// force it to update
         trainDao.save(train);
         orderDao.save(order);
-        user.setMileagePoints(user.getMileagePoints() + order.getGenerateMileagePoints());
+        //user.setMileagePoints(user.getMileagePoints() + order.getGenerateMileagePoints());
         userDao.save(user);
         return order.getId();
     }
@@ -199,14 +200,19 @@ public class OrderServiceImpl implements OrderService {
 
             // refund money
             PaymentType type = order.getPaymentType();
+            PaymentStrategy strategy = null;
+
             switch (type) {
                 case Alipay:
-                    AlipayPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
+                    strategy = AlipayPaymentStrategy.INSTANCE;
+                    //AlipayPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
                     break;
                 case WeChat:
-                    WeChatPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
+                    strategy = WeChatPaymentStrategy.INSTANCE;
+                    //WeChatPaymentStrategy.INSTANCE.refund(order.getCaculatedPrice());
                     break;
             }
+            strategy.refund(order.getCaculatedPrice());
         }
         train.setUpdatedAt(null);// force it to update
         trainDao.save(train);
@@ -219,7 +225,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void payOrder(Long id, int type) {
         OrderEntity order = orderDao.findById(id).get();
-
+        PaymentStrategy strategy = null;
         PaymentType pt = type == 0 ? PaymentType.Alipay : PaymentType.WeChat;
         order.setPaymentType(pt);
 
@@ -232,17 +238,21 @@ public class OrderServiceImpl implements OrderService {
         //  use payment strategy to pay!
         switch (pt) {
             case Alipay:
-                AlipayPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
+                strategy = AlipayPaymentStrategy.INSTANCE;
+                //AlipayPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
                 break;
             case WeChat:
-                WeChatPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
+                strategy = WeChatPaymentStrategy.INSTANCE;
+                //WeChatPaymentStrategy.INSTANCE.pay(order.getCaculatedPrice());
                 break;
         }
+
+        strategy.pay(order.getCaculatedPrice());
+
         user.setMileagePoints((int) (user.getMileagePoints() - order.getConsumeMileagePoints()));
 
         // update user's credits, so that user can get discount next time
         user.setMileagePoints((int) (user.getMileagePoints() + order.getGenerateMileagePoints()));
-        user.setUpdatedAt(null);// force it to update
 
         userDao.save(user);
 

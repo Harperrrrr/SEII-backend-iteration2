@@ -34,7 +34,7 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
             FIRST_CLASS_SEAT_MAP.put(counter++, s);
         }
 
-        for (String s : Arrays.asList("4车1A", "4车1B", "4车1C", "4车1D", "4车2F", "4车2A", "4车2B", "4车2C", "4车2D", "4车2F", "4车3A", "4车3B", "4车3C", "4车3D", "4车3F")) {
+        for (String s : Arrays.asList("4车1A", "4车1B", "4车1C", "4车1D", "4车1F", "4车2A", "4车2B", "4车2C", "4车2D", "4车2F", "4车3A", "4车3B", "4车3C", "4车3D", "4车3F")) {
             SEAT_MAP.put(s,counter);
             SECOND_CLASS_SEAT_MAP.put(counter++, s);
         }
