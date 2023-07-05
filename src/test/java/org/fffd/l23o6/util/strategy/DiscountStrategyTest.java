@@ -51,4 +51,25 @@ class DiscountStrategyTest {
         Assertions.assertArrayEquals(expected,actual);
     }
 
+    @Test
+    public void equal50kWithLowPrice(){
+        double[] actual = discountStrategy.getDiscountWithPoints(50000,100);
+        double[] expected = {100,10000 + 82.0/(0.25*0.01)};
+        Assertions.assertArrayEquals(expected,actual);
+    }
+
+    @Test
+    public void above50k(){
+        double[] actual = discountStrategy.getDiscountWithPoints(68998,250);
+        double[] expected = {118 + 18998*0.3*0.01,68998};
+        Assertions.assertArrayEquals(expected,actual);
+    }
+
+    @Test
+    public void above50kWithLowPrice(){
+        double[] actual = discountStrategy.getDiscountWithPoints(168998,150);
+        double[] expected = {150,(int)(50000+32/(0.3*0.01))};
+        Assertions.assertArrayEquals(expected,actual);
+    }
+
 }
