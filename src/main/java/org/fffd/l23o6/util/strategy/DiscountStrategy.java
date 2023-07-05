@@ -24,6 +24,7 @@ public class DiscountStrategy {
                 discount = Math.min(discount, DISCOUNT_TABLE[i][3]);
                 if(discount > amount){
                     usedMileagePoints += (amount - DISCOUNT_TABLE[i][1]) / (DISCOUNT_TABLE[i][2] * 0.01);
+                    discount = amount;
                     break;
                 }
                 usedMileagePoints += (discount - DISCOUNT_TABLE[i][1]) / (DISCOUNT_TABLE[i][2] * 0.01);
