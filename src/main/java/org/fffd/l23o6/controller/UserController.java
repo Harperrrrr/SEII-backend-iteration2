@@ -67,6 +67,11 @@ public class UserController {
         return CommonResponse.success(user);
     }
 
+    @PostMapping("findUserIDByIdn")
+    public CommonResponse<Long> findUserIDByIdn(String idn){
+        return CommonResponse.success(userService.findByIdn(idn));
+    }
+
     @PutMapping("user")
     public CommonResponse<?> editInfo(@Valid @RequestBody EditUserInfoRequest request) {
         StpUtil.checkLogin();
