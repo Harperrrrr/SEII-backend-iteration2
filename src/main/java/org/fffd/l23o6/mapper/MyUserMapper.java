@@ -19,7 +19,7 @@ public class MyUserMapper {
         userVO.name( userEntity.getName() );
         userVO.phone( userEntity.getPhone() );
         userVO.idn( userEntity.getIdn() );
-        userVO.userType(userEntity.getUserType());
+        userVO.usertype(userEntity.getUsertype());
         userVO.type( userEntity.getType() );
         userVO.mileagePoints(userEntity.getMileagePoints());
 

@@ -28,7 +28,24 @@ public class UserServiceImpl implements UserService {
             throw new BizException(BizError.USERNAME_EXISTS);
         }
 
-        userDao.save(UserEntity.builder().userType(UserType.valueOf(userType)).username(username).password(BCrypt.hashpw(password))
+        UserType usertype = null;
+
+        switch (userType){
+            case "客户":
+                usertype = UserType.USER;
+                break;
+            case "铁路管理员":
+                usertype = UserType.TRAIN_MANAGER;
+                break;
+            case "票务员":
+                usertype = UserType.TICKET_MANAGER;
+                break;
+            case "余票管理员":
+                usertype = UserType.REMAINING_TICKET_MANAGER;
+                break;
+        }
+
+        userDao.save(UserEntity.builder().usertype(usertype).username(username).password(BCrypt.hashpw(password))
                 .name(name).idn(idn).phone(phone).type(type).mileagePoints(0).build());
     }
 
@@ -40,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void login(String username, String password, String userType) {
         UserEntity user = userDao.findByUsername(username);
-        if (user == null || !BCrypt.checkpw(password, user.getPassword()) || !user.getUserType().getText().equals(userType)) {
+        if (user == null || !BCrypt.checkpw(password, user.getPassword()) || !user.getUsertype().getText().equals(userType)) {
             throw new BizException(BizError.INVALID_CREDENTIAL);
         }
     }

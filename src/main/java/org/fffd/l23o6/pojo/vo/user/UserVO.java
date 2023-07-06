@@ -11,7 +11,7 @@ import org.fffd.l23o6.pojo.enum_.UserType;
 @NoArgsConstructor
 @Builder
 public class UserVO {
-    private UserType userType;
+    private UserType usertype;
     private String username;
     private String name;
     private String phone;

@@ -24,7 +24,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class UserEntity {
     @NotNull
-    private UserType userType;
+    private UserType usertype;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
