@@ -37,6 +37,12 @@ public class OrderController {
         return CommonResponse.success(orderService.listOrders(StpUtil.getLoginIdAsString()));
     }
 
+    @GetMapping("order")
+    public CommonResponse<List<OrderVO>> listAllOrders(){
+        StpUtil.checkLogin();
+        return CommonResponse.success(orderService.listAllOrders());
+    }
+
     @GetMapping("order/{orderId}")
     public CommonResponse<OrderVO> getOrder(@PathVariable("orderId") Long orderId) {
         return CommonResponse.success(orderService.getOrder(orderId));
