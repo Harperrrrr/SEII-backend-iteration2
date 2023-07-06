@@ -7,6 +7,8 @@ import org.fffd.l23o6.dao.OrderDao;
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
 import org.fffd.l23o6.dao.UserDao;
+import org.fffd.l23o6.mapper.OrderMapper;
+import org.fffd.l23o6.mapper.TrainMapper;
 import org.fffd.l23o6.pojo.entity.UserEntity;
 import org.fffd.l23o6.pojo.enum_.OrderStatus;
 import org.fffd.l23o6.exception.BizError;
@@ -22,6 +24,7 @@ import org.fffd.l23o6.util.strategy.payment.PaymentStrategy;
 import org.fffd.l23o6.util.strategy.payment.WeChatPaymentStrategy;
 import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
 import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.github.lyc8503.spring.starter.incantation.exception.BizException;
@@ -147,6 +150,12 @@ public class OrderServiceImpl implements OrderService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public List<OrderVO> listAllOrders() {
+        return orderDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
+                .map(OrderMapper.INSTANCE::toOrderVO).collect(Collectors.toList());
+    }
+
     public OrderVO getOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();
         TrainEntity train = trainDao.findById(order.getTrainId()).get();
@@ -164,6 +173,11 @@ public class OrderServiceImpl implements OrderService {
                 .departureTime(train.getDepartureTimes().get(startIndex))
                 .arrivalTime(train.getArrivalTimes().get(endIndex))
                 .build();
+    }
+
+    @Override
+    public List<OrderVO> listOrdersByTrainID(Long trainID) {
+        return null;
     }
 
     public void cancelOrder(Long id) {
@@ -257,6 +271,17 @@ public class OrderServiceImpl implements OrderService {
         userDao.save(user);
 
         order.setStatus(OrderStatus.PAID);
+        orderDao.save(order);
+    }
+
+    @Override
+    public void completeOrder(Long id) {
+        OrderEntity order = orderDao.findById(id).get();
+        if (order.getStatus() != OrderStatus.PAID){
+            throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);
+        }
+
+        order.setStatus(OrderStatus.COMPLETED);
         orderDao.save(order);
     }
 }
