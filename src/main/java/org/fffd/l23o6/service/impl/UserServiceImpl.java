@@ -55,6 +55,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity findByIdn(String idn) {
+        return userDao.findByIdn(idn);
+    }
+
+    @Override
     public void login(String username, String password, String userType) {
         UserEntity user = userDao.findByUsername(username);
         if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
