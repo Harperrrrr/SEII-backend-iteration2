@@ -23,7 +23,7 @@ public class UserController {
     public CommonResponse<?> login(@Valid @RequestBody LoginRequest request) {
         // Throws BizException if auth failed.
         try {
-            userService.login(request.getUsername(), request.getPassword());
+            userService.login(request.getUsername(), request.getPassword(), request.getUsertype());
             StpUtil.login(request.getUsername());
             return CommonResponse.success();
         } catch (Exception ex) {
@@ -41,7 +41,7 @@ public class UserController {
     public CommonResponse<?> register(@Valid @RequestBody RegisterRequest request) {
         // Throws BizException if register failed.
         try {
-            userService.register(request.getUsername(), request.getPassword(), request.getName(), request.getIdn(), request.getPhone(), request.getType());
+            userService.register(request.getUsertype(), request.getUsername(), request.getPassword(), request.getName(), request.getIdn(), request.getPhone(), request.getType());
             return CommonResponse.success();
         } catch (Exception ex) {
             if (ex instanceof BizException) {

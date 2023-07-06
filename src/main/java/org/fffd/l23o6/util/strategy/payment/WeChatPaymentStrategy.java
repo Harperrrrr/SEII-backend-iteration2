@@ -6,9 +6,6 @@ public class WeChatPaymentStrategy extends PaymentStrategy{
 
     @Override
     public void pay(double amount) {
-        if (amount > acount){
-
-        }
         acount -= amount;
     }
 

@@ -9,6 +9,10 @@ import lombok.Data;
 @Data
 @Schema(description = "登录请求")
 public class LoginRequest {
+    @Schema(description = "身份", required = true)
+    @NotNull
+    @Pattern(regexp = "^((客户)|(铁路管理员)|(票务员)|(余票管理员))$", message = "身份类型错误")
+    private String usertype;
 
     @Schema(description = "用户名", required = true)
     @NotNull

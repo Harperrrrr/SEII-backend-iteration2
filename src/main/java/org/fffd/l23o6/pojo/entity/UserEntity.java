@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import org.fffd.l23o6.pojo.enum_.UserType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,6 +23,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class UserEntity {
+    @NotNull
+    private UserType usertype;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,6 +9,7 @@ import org.fffd.l23o6.exception.BizError;
 import org.fffd.l23o6.mapper.MyTrainMapper;
 import org.fffd.l23o6.mapper.MyUserMapper;
 import org.fffd.l23o6.pojo.entity.UserEntity;
+import org.fffd.l23o6.pojo.enum_.UserType;
 import org.fffd.l23o6.pojo.vo.user.UserVO;
 import org.fffd.l23o6.service.UserService;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,31 @@ public class UserServiceImpl implements UserService {
 
     private final MyUserMapper myUserMapper;
     @Override
-    public void register(String username, String password, String name, String idn, String phone, String type) {
+    public void register(String userType, String username, String password, String name, String idn, String phone, String type) {
         UserEntity user = userDao.findByUsername(username);
 
         if (user != null) {
             throw new BizException(BizError.USERNAME_EXISTS);
         }
 
-        userDao.save(UserEntity.builder().username(username).password(BCrypt.hashpw(password))
+        UserType usertype = null;
+
+        switch (userType){
+            case "客户":
+                usertype = UserType.USER;
+                break;
+            case "铁路管理员":
+                usertype = UserType.TRAIN_MANAGER;
+                break;
+            case "票务员":
+                usertype = UserType.TICKET_MANAGER;
+                break;
+            case "余票管理员":
+                usertype = UserType.REMAINING_TICKET_MANAGER;
+                break;
+        }
+
+        userDao.save(UserEntity.builder().usertype(usertype).username(username).password(BCrypt.hashpw(password))
                 .name(name).idn(idn).phone(phone).type(type).mileagePoints(0).build());
     }
 
@@ -37,9 +55,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void login(String username, String password) {
+    public void login(String username, String password, String userType) {
         UserEntity user = userDao.findByUsername(username);
-        if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
+        if (user == null || !BCrypt.checkpw(password, user.getPassword()) || !user.getUsertype().getText().equals(userType)) {
             throw new BizException(BizError.INVALID_CREDENTIAL);
         }
     }
