@@ -65,7 +65,7 @@ public class OrderController {
         return CommonResponse.success();
     }
 
-    @PostMapping("order/{orderId}")
+    @PostMapping("allOrder/{orderId}")
     public CommonResponse<?> completeOrder(@PathVariable("orderId") Long orderId) {
         orderService.completeOrder(orderId);
         return CommonResponse.success();
