@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity findByIdn(String idn) {
-        return userDao.findByIdn(idn);
+    public Long findByIdn(String idn) {
+        return userDao.findByIdn(idn).getId();
     }
 
     @Override
