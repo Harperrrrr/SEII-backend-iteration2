@@ -57,8 +57,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void login(String username, String password, String userType) {
         UserEntity user = userDao.findByUsername(username);
-        if (user == null || !BCrypt.checkpw(password, user.getPassword()) || !user.getUsertype().getText().equals(userType)) {
+        if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
             throw new BizException(BizError.INVALID_CREDENTIAL);
+        }
+        else if (!user.getUsertype().getText().equals(userType)) {
+            throw new BizException(BizError.INVALID_IDENTITY);
         }
     }
 

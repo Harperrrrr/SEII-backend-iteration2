@@ -256,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
 
         userDao.save(user);
 
-        order.setStatus(OrderStatus.COMPLETED);
+        order.setStatus(OrderStatus.PAID);
         orderDao.save(order);
     }
 }
