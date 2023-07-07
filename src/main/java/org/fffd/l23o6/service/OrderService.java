@@ -10,7 +10,7 @@ public interface OrderService {
     Long createOrder(String username, Long trainId, Long fromStationId, Long toStationId, String seatType, Long seatNumber);
     List<OrderDetailVO> listOrders(String username);
     List<OrderDetailVO> listAllOrders();
-    OrderVO getOrder(Long id);
+    OrderDetailVO getOrder(Long id);
 
     List<OrderVO> listOrdersByTrainID(Long trainID);
 

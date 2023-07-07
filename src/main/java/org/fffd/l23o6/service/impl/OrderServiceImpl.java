@@ -151,13 +151,17 @@ public class OrderServiceImpl implements OrderService {
         return orderDetailVOS;
     }
 
-    public OrderVO getOrder(Long id) {
+    public OrderDetailVO getOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();
+        UserEntity user = userDao.findById(order.getUserId()).get();
         TrainEntity train = trainDao.findById(order.getTrainId()).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         int startIndex = route.getStationIds().indexOf(order.getDepartureStationId());
         int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-        return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
+        return OrderDetailVO.builder().id(order.getId())
+                .name(user.getName())
+                .idn(user.getIdn())
+                .trainId(order.getTrainId())
                 .seat(order.getSeat()).status(order.getStatus().getText())
                 .originalPrice(order.getOriginalPrice())
                 .consumeMileagePoints(order.getConsumeMileagePoints())

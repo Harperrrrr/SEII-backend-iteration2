@@ -41,7 +41,7 @@ public class OrderController {
     }
 
     @GetMapping("order/{orderId}")
-    public CommonResponse<OrderVO> getOrder(@PathVariable("orderId") Long orderId) {
+    public CommonResponse<OrderDetailVO> getOrder(@PathVariable("orderId") Long orderId) {
         return CommonResponse.success(orderService.getOrder(orderId));
     }
 
