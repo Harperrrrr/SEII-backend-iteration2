@@ -120,7 +120,7 @@ public class GSeriesSeatStrategyTest {
     public void leftSeatCount7() {
         assertThrows(BizException.class,() ->{
             boolean[][] map = new boolean[stationNum][GSeriesSeatStrategy.INSTANCE.getSeatNum()];
-            GSeriesSeatStrategy.INSTANCE.getLeftSeatCount(4, 4, map);
+            GSeriesSeatStrategy.INSTANCE.getLeftSeatCount(100, 4, map);
         });
     }
 

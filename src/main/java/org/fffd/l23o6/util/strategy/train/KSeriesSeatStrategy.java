@@ -102,11 +102,11 @@ public class KSeriesSeatStrategy extends TrainSeatStrategy {
     }
 
     public Map<KSeriesSeatType, Integer> getLeftSeatCount(int startStationIndex, int endStationIndex, boolean[][] seatMap) {
-        if(startStationIndex >= endStationIndex){
-            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"起点与终点不合法");
-        }
         if(seatMap == null){
             throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"座位为空");
+        }
+        if(startStationIndex >= endStationIndex || startStationIndex> seatMap.length){
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"起点与终点不合法");
         }
         Map<KSeriesSeatStrategy.KSeriesSeatType, Integer> result = new HashMap<>();
         List<KSeriesSeatStrategy.KSeriesSeatType> types = new ArrayList<>(TYPE_MAP.keySet());

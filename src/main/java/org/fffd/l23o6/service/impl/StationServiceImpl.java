@@ -17,27 +17,34 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class StationServiceImpl implements StationService{
+public class StationServiceImpl implements StationService {
     private final StationDao stationDao;
+
     @Override
-    public StationVO getStation(Long stationId){
+    public StationVO getStation(Long stationId) {
         return StationMapper.INSTANCE.toStationVO(stationDao.findById(stationId).get());
     }
+
     @Override
-    public List<StationVO> listStations(){
+    public List<StationVO> listStations() {
         return stationDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(StationMapper.INSTANCE::toStationVO).collect(Collectors.toList());
     }
+
     @Override
-    public void addStation(String name){
+    public void addStation(String name) {
         StationEntity entity = stationDao.findByName(name);
-        if(entity!=null){
+        if (entity != null) {
             throw new BizException(BizError.STATIONNAME_EXISTS);
         }
         stationDao.save(StationEntity.builder().name(name).build());
     }
+
     @Override
-    public void editStation(Long id, String name){
+    public void editStation(Long id, String name) {
         StationEntity entity = stationDao.findById(id).get();
+//        if (entity == null) {
+//            throw new BizException(BizError.);
+//        }
         entity.setName(name);
         stationDao.save(entity);
     }

@@ -28,9 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest
+@SpringBootTest //启动完整的应用程序上下文
 @AutoConfigureMockMvc
 public class OrderIntegrationTest {
+    /**
+     * 设置环境
+     * 输入
+     * 比较输出
+     * 给出结论
+     *
+     */
     private OrderService orderService = Mockito.mock(OrderService.class);
 
     private OrderController orderController = new OrderController(orderService);

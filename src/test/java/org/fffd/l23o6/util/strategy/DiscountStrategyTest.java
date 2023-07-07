@@ -1,6 +1,8 @@
 package org.fffd.l23o6.util.strategy;
 
+import io.github.lyc8503.spring.starter.incantation.exception.BizException;
 import jakarta.annotation.Resource;
+import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -72,4 +74,10 @@ public class DiscountStrategyTest {
         Assertions.assertArrayEquals(expected,actual);
     }
 
+    @Test
+    public void invalidArgument(){
+        assertThrows(BizException.class,() ->{
+            discountStrategy.getDiscountWithPoints(-1,100);
+        });
+    }
 }

@@ -140,4 +140,17 @@ public class TrainServiceImpl implements TrainService {
     public void deleteTrain(Long id) {
         trainDao.deleteById(id);
     }
+
+    @Override
+    public void changeTrainStatus(Long trainId,int stationIdx) {
+        TrainEntity entity = trainDao.findById(trainId).get();
+        List<String> extraInfos = entity.getExtraInfos();
+        if(extraInfos.get(stationIdx).equals("预计正点")){
+            extraInfos.set(stationIdx,"预计晚点");
+        }else{
+            extraInfos.set(stationIdx,"预计正点");
+        }
+        entity.setExtraInfos(extraInfos);
+        trainDao.save(entity);
+    }
 }

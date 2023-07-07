@@ -9,15 +9,7 @@ import org.fffd.l23o6.pojo.vo.train.ListTrainRequest;
 import org.fffd.l23o6.pojo.vo.train.TrainDetailVO;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
 import org.fffd.l23o6.service.TrainService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -66,6 +58,12 @@ public class TrainController {
     @DeleteMapping("admin/train/{trainId}")
     public CommonResponse<?> deleteTrain(@PathVariable Long trainId) {
         trainService.deleteTrain(trainId);
+        return CommonResponse.success();
+    }
+
+    @PutMapping("admin/train/change/{trainId}")
+    public CommonResponse<?> changeTrainStatus(@PathVariable Long trainId, @RequestParam int stationIdx) {
+        trainService.changeTrainStatus(trainId,stationIdx);
         return CommonResponse.success();
     }
 }

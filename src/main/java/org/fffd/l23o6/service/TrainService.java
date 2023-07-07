@@ -22,4 +22,6 @@ public interface TrainService {
             List<Date> departureTimes);
 
     public void deleteTrain(Long trainId);
+
+    public void changeTrainStatus(Long trainId,int stationIdx);
 }
