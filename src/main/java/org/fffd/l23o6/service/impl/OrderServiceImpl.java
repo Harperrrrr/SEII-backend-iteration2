@@ -112,27 +112,32 @@ public class OrderServiceImpl implements OrderService {
         return order.getId();
     }
 
-    public List<OrderVO> listOrders(String username) {
-        Long userId = userDao.findByUsername(username).getId();
-        List<OrderEntity> orders = orderDao.findByUserId(userId);
-        orders.sort((o1, o2) -> o2.getId().compareTo(o1.getId()));
-        return orders.stream().map(order -> {
+    public List<OrderDetailVO> listOrders(String username) {
+        UserEntity user = userDao.findByUsername(username);
+        List<OrderEntity> orders = orderDao.findByUserId(user.getId());
+        List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
+        for(OrderEntity order: orders){
             TrainEntity train = trainDao.findById(order.getTrainId()).get();
             RouteEntity route = routeDao.findById(train.getRouteId()).get();
             int startIndex = route.getStationIds().indexOf(order.getDepartureStationId());
             int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-            return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
+            orderDetailVOS.add(OrderDetailVO.builder()
+                    .id(order.getId())
+                    .name(user.getName())
+                    .idn(user.getIdn())
+                    .trainId(order.getTrainId())
                     .originalPrice(order.getOriginalPrice())
-                    .consumeMileagePoints(order.getConsumeMileagePoints())
                     .caculatedPrice(order.getCaculatedPrice())
-                    .seat(order.getSeat()).status(order.getStatus().getText())
-                    .createdAt(order.getCreatedAt())
                     .startStationId(order.getDepartureStationId())
                     .endStationId(order.getArrivalStationId())
-                    .departureTime(train.getDepartureTimes().get(startIndex))
                     .arrivalTime(train.getArrivalTimes().get(endIndex))
-                    .build();
-        }).collect(Collectors.toList());
+                    .departureTime(train.getDepartureTimes().get(startIndex))
+                    .consumeMileagePoints(order.getConsumeMileagePoints())
+                    .seat(order.getSeat()).status(order.getStatus().getText())
+                    .createdAt(order.getCreatedAt())
+                    .build());
+        }
+        return orderDetailVOS;
     }
 
     @Override
@@ -140,25 +145,8 @@ public class OrderServiceImpl implements OrderService {
         List<UserVO> users = userDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(UserMapper.INSTANCE::toUserVO).collect(Collectors.toList());
         List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
         for (UserVO user: users){
-            List<OrderVO> orders = listOrders(user.getUsername());
-            for(OrderVO orderVO: orders){
-                orderDetailVOS.add(OrderDetailVO.builder()
-                                .id(orderVO.getId())
-                                .username(user.getUsername())
-                                .idn(user.getIdn())
-                                .trainId(orderVO.getTrainId())
-                                .originalPrice(orderVO.getOriginalPrice())
-                                .caculatedPrice(orderVO.getCaculatedPrice())
-                                .startStationId(orderVO.getStartStationId())
-                                .endStationId(orderVO.getEndStationId())
-                                .departureTime(orderVO.getDepartureTime())
-                                .arrivalTime(orderVO.getArrivalTime())
-                                .consumeMileagePoints(orderVO.getConsumeMileagePoints())
-                                .status(orderVO.getStatus())
-                                .createdAt(orderVO.getCreatedAt())
-                                .seat(orderVO.getSeat())
-                                .build());
-            }
+            List<OrderDetailVO> orders = listOrders(user.getUsername());
+            orderDetailVOS.addAll(orders);
         }
         return orderDetailVOS;
     }

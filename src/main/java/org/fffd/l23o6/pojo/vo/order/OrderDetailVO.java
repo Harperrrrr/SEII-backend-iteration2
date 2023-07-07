@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 public class OrderDetailVO {
     private Long id;
-    private String username;
+    private String name;
     private String idn;
     private Long trainId;
     private double originalPrice;
