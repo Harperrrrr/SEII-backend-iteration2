@@ -84,4 +84,26 @@ public class TrainController {
         trainService.saveSeatsK(trainId,softSleepSeat,hardSleepSeat,softSeat,hardSeat);
         return CommonResponse.success();
     }
+
+    @GetMapping("seat/release/G")
+    public CommonResponse<?> releaseSeatG(@RequestParam Long trainId,@RequestParam int businessSeat,@RequestParam int firstClassSeat,@RequestParam int secondClassSeat) {
+        trainService.releaseSeatsG(trainId,businessSeat,firstClassSeat,secondClassSeat);
+        return CommonResponse.success();
+    }
+    @GetMapping("seat/release/K")
+    public CommonResponse<?> releaseSeatK(@RequestParam Long trainId,@RequestParam int softSleepSeat,@RequestParam int hardSleepSeat,@RequestParam int softSeat,@RequestParam int hardSeat) {
+        trainService.releaseSeatsK(trainId,softSleepSeat,hardSleepSeat,softSeat,hardSeat);
+        return CommonResponse.success();
+    }
+
+    @GetMapping("seat/save/G/{trainId}")
+    public CommonResponse<?> getSaveNumG(@PathVariable Long trainId) {
+        return CommonResponse.success(trainService.getSeatsNumG(trainId));
+    }
+
+
+    @GetMapping("seat/save/K/{trainId}")
+    public CommonResponse<?> getSaveNumK(@PathVariable Long trainId) {
+        return CommonResponse.success(trainService.getSeatsNumK(trainId));
+    }
 }

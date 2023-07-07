@@ -33,4 +33,10 @@ public interface TrainService {
 
     public void saveSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat);
     public void saveSeatsK(Long trainId,int softSleepSeat,int hardSleepSeat,int softSeat,int hardSeat);
+
+    public void releaseSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat);
+    public void releaseSeatsK(Long trainId,int softSleepSeat,int hardSleepSeat,int softSeat,int hardSeat);
+
+    public int[] getSeatsNumG(Long trainId);
+    public int[] getSeatsNumK(Long trainId);
 }
