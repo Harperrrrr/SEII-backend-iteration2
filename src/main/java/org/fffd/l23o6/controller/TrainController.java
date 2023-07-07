@@ -84,4 +84,10 @@ public class TrainController {
         trainService.saveSeatsK(trainId,softSleepSeat,hardSleepSeat,softSeat,hardSeat);
         return CommonResponse.success();
     }
+
+    @GetMapping("seat/release/G")
+    public CommonResponse<?> releaseSeatG(@RequestParam Long trainId,@RequestParam int businessSeat,@RequestParam int firstClassSeat,@RequestParam int secondClassSeat) {
+        trainService.releaseSeatsG(trainId,businessSeat,firstClassSeat,secondClassSeat);
+        return CommonResponse.success();
+    }
 }

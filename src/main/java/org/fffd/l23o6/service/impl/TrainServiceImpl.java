@@ -195,6 +195,7 @@ public class TrainServiceImpl implements TrainService {
                 train.saveSeats[j][count] = true;
             }
         }
+        trainDao.save(train);
     }
 
     @Override
@@ -245,5 +246,131 @@ public class TrainServiceImpl implements TrainService {
                 train.saveSeats[j][count] = true;
             }
         }
+        trainDao.save(train);
+    }
+
+    @Override
+    public void releaseSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat) {
+        TrainEntity train = trainDao.findById(trainId).get();
+        RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        boolean[][] saveMap = train.getSaveSeats();
+        boolean[][] seatMap = train.getSeats();
+        Map<GSeriesSeatStrategy.GSeriesSeatType, Map<Integer, String>> typeMap
+                = GSeriesSeatStrategy.INSTANCE.TYPE_MAP;
+
+        Map<Integer, String> map1 = typeMap.get(GSeriesSeatStrategy.GSeriesSeatType.BUSINESS_SEAT);
+        for (Integer i : map1.keySet()) {
+            if(businessSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                businessSeat--;
+            }
+        }
+
+        Map<Integer, String> map2 = typeMap.get(GSeriesSeatStrategy.GSeriesSeatType.FIRST_CLASS_SEAT);
+        for (Integer i : map2.keySet()) {
+            if(firstClassSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                firstClassSeat--;
+            }
+        }
+
+        Map<Integer, String> map3 = typeMap.get(GSeriesSeatStrategy.GSeriesSeatType.SECOND_CLASS_SEAT);
+        for (Integer i : map3.keySet()) {
+            if(secondClassSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                secondClassSeat--;
+            }
+        }
+
+        train.setSaveSeats(saveMap);
+        train.setSeats(seatMap);
+        trainDao.save(train);
+    }
+
+    @Override
+    public void releaseSeatsK(Long trainId, int softSleepSeat, int hardSleepSeat, int softSeat, int hardSeat) {
+        TrainEntity train = trainDao.findById(trainId).get();
+        RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        boolean[][] saveMap = train.getSaveSeats();
+        boolean[][] seatMap = train.getSeats();
+        Map<KSeriesSeatStrategy.KSeriesSeatType, Map<Integer, String>> typeMap
+                = KSeriesSeatStrategy.INSTANCE.TYPE_MAP;
+
+        Map<Integer, String> map1 = typeMap.get(KSeriesSeatStrategy.KSeriesSeatType.SOFT_SLEEPER_SEAT);
+        for (Integer i : map1.keySet()) {
+            if(softSleepSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                softSleepSeat--;
+            }
+        }
+
+        Map<Integer, String> map2 = typeMap.get(KSeriesSeatStrategy.KSeriesSeatType.HARD_SLEEPER_SEAT);
+        for (Integer i : map2.keySet()) {
+            if(hardSleepSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                hardSleepSeat--;
+            }
+        }
+
+        Map<Integer, String> map3 = typeMap.get(KSeriesSeatStrategy.KSeriesSeatType.SOFT_SEAT);
+        for (Integer i : map3.keySet()) {
+            if(softSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                softSeat--;
+            }
+        }
+
+        Map<Integer, String> map4 = typeMap.get(KSeriesSeatStrategy.KSeriesSeatType.HARD_SEAT);
+        for (Integer i : map4.keySet()) {
+            if(hardSeat == 0){
+                break;
+            }
+            if (saveMap[0][i]) {
+                for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                    saveMap[j][i] = false;
+                    seatMap[j][i] = false;
+                }
+                hardSeat--;
+            }
+        }
+        train.setSaveSeats(saveMap);
+        train.setSeats(seatMap);
+        trainDao.save(train);
     }
 }
