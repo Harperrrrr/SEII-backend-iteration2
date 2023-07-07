@@ -7,8 +7,7 @@ import org.fffd.l23o6.dao.OrderDao;
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
 import org.fffd.l23o6.dao.UserDao;
-import org.fffd.l23o6.mapper.OrderMapper;
-import org.fffd.l23o6.mapper.TrainMapper;
+import org.fffd.l23o6.mapper.*;
 import org.fffd.l23o6.pojo.entity.UserEntity;
 import org.fffd.l23o6.pojo.enum_.OrderStatus;
 import org.fffd.l23o6.exception.BizError;
@@ -16,8 +15,10 @@ import org.fffd.l23o6.pojo.entity.OrderEntity;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 import org.fffd.l23o6.pojo.enum_.PaymentType;
+import org.fffd.l23o6.pojo.vo.order.OrderDetailVO;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
 import org.fffd.l23o6.pojo.vo.train.TicketInfo;
+import org.fffd.l23o6.pojo.vo.user.UserVO;
 import org.fffd.l23o6.service.OrderService;
 import org.fffd.l23o6.util.strategy.DiscountStrategy;
 import org.fffd.l23o6.util.strategy.payment.AlipayPaymentStrategy;
@@ -134,9 +135,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderVO> listAllOrders() {
-        return orderDao.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map(OrderMapper.INSTANCE::toOrderVO).collect(Collectors.toList());
+    public List<OrderDetailVO> listAllOrders() {
+        List<UserVO> users = userDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(UserMapper.INSTANCE::toUserVO).collect(Collectors.toList());
+        List<OrderDetailVO> orderDetailVOS = null;
+        for (UserVO user: users){
+            List<OrderVO> orders = listOrders(user.getUsername());
+            for(OrderVO orderVO: orders){
+                orderDetailVOS.add(OrderDetailVO.builder()
+                                .id(orderVO.getId())
+                                .username(user.getUsername())
+                                .idn(user.getIdn())
+                                .trainId(orderVO.getTrainId())
+                                .originalPrice(orderVO.getOriginalPrice())
+                                .caculatedPrice(orderVO.getCaculatedPrice())
+                                .startStationId(orderVO.getStartStationId())
+                                .endStationId(orderVO.getEndStationId())
+                                .departureTime(orderVO.getDepartureTime())
+                                .arrivalTime(orderVO.getArrivalTime())
+                                .consumeMileagePoints(orderVO.getConsumeMileagePoints())
+                                .status(orderVO.getStatus())
+                                .createdAt(orderVO.getCreatedAt())
+                                .seat(orderVO.getSeat())
+                                .build());
+            }
+        }
+        return orderDetailVOS;
     }
 
     public OrderVO getOrder(Long id) {
