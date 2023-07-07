@@ -25,11 +25,14 @@ public class OrderController {
     @PostMapping("order")
     public CommonResponse<OrderIdVO> createOrder(@Valid @RequestBody CreateOrderRequest request) {
         StpUtil.checkLogin();
-        return CommonResponse.success(new OrderIdVO(orderService.createOrder(StpUtil.getLoginIdAsString(), request.getTrainId(), request.getStartStationId(), request.getEndStationId(), request.getSeatType(), null)));
+        if(request.getType() == 0) return CommonResponse.success(new OrderIdVO(orderService.createOrder(
+                StpUtil.getLoginIdAsString(), request.getTrainId(), request.getStartStationId(), request.getEndStationId(), request.getSeatType(), null)));
+        return CommonResponse.success(new OrderIdVO(orderService.createOrder(request.getName(),
+                request.getTrainId(), request.getStartStationId(), request.getEndStationId(), request.getSeatType(), null)));
     }
 
     @GetMapping("order")
-    public CommonResponse<List<OrderVO>> listOrders(){
+    public CommonResponse<List<OrderDetailVO>> listOrders(){
         StpUtil.checkLogin();
         return CommonResponse.success(orderService.listOrders(StpUtil.getLoginIdAsString()));
     }
@@ -41,7 +44,7 @@ public class OrderController {
     }
 
     @GetMapping("order/{orderId}")
-    public CommonResponse<OrderVO> getOrder(@PathVariable("orderId") Long orderId) {
+    public CommonResponse<OrderDetailVO> getOrder(@PathVariable("orderId") Long orderId) {
         return CommonResponse.success(orderService.getOrder(orderId));
     }
 

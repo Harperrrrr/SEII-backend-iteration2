@@ -56,14 +56,32 @@ public class OrderServiceImpl implements OrderService {
         int endStationIndex = route.getStationIds().indexOf(toStationId);
         int miles = endStationIndex - startStationIndex;
 
-//        List<TicketInfo> ticketInfos = train.ticketInfos;
-//        for (TicketInfo ticketInfo: ticketInfos){
-//            if (ticketInfo.getType().equals(seatType)){
-//                moneyPerStation = ticketInfo.getPrice();
-//                ticketInfo.setCount(ticketInfo.getCount() - 1);
-//                break;
-//            }
-//        }
+        switch (seatType) {
+            case "软卧":
+                moneyPerStation = 250;
+                break;
+            case "硬卧":
+                moneyPerStation = 200;
+                break;
+            case "软座":
+                moneyPerStation = 150;
+                break;
+            case "硬座":
+                moneyPerStation = 100;
+                break;
+            case "商务座":
+                moneyPerStation = 200;
+                break;
+            case "一等座":
+                moneyPerStation = 150;
+                break;
+            case "二等座":
+                moneyPerStation = 100;
+                break;
+            case "无座":
+                moneyPerStation = 50;
+                break;
+        }
         String seat = null;
         int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
@@ -112,27 +130,32 @@ public class OrderServiceImpl implements OrderService {
         return order.getId();
     }
 
-    public List<OrderVO> listOrders(String username) {
-        Long userId = userDao.findByUsername(username).getId();
-        List<OrderEntity> orders = orderDao.findByUserId(userId);
-        orders.sort((o1, o2) -> o2.getId().compareTo(o1.getId()));
-        return orders.stream().map(order -> {
+    public List<OrderDetailVO> listOrders(String username) {
+        UserEntity user = userDao.findByUsername(username);
+        List<OrderEntity> orders = orderDao.findByUserId(user.getId());
+        List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
+        for(OrderEntity order: orders){
             TrainEntity train = trainDao.findById(order.getTrainId()).get();
             RouteEntity route = routeDao.findById(train.getRouteId()).get();
             int startIndex = route.getStationIds().indexOf(order.getDepartureStationId());
             int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-            return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
+            orderDetailVOS.add(OrderDetailVO.builder()
+                    .id(order.getId())
+                    .name(user.getName())
+                    .idn(user.getIdn())
+                    .trainId(order.getTrainId())
                     .originalPrice(order.getOriginalPrice())
-                    .consumeMileagePoints(order.getConsumeMileagePoints())
                     .caculatedPrice(order.getCaculatedPrice())
-                    .seat(order.getSeat()).status(order.getStatus().getText())
-                    .createdAt(order.getCreatedAt())
                     .startStationId(order.getDepartureStationId())
                     .endStationId(order.getArrivalStationId())
-                    .departureTime(train.getDepartureTimes().get(startIndex))
                     .arrivalTime(train.getArrivalTimes().get(endIndex))
-                    .build();
-        }).collect(Collectors.toList());
+                    .departureTime(train.getDepartureTimes().get(startIndex))
+                    .consumeMileagePoints(order.getConsumeMileagePoints())
+                    .seat(order.getSeat()).status(order.getStatus().getText())
+                    .createdAt(order.getCreatedAt())
+                    .build());
+        }
+        return orderDetailVOS;
     }
 
     @Override
@@ -140,36 +163,23 @@ public class OrderServiceImpl implements OrderService {
         List<UserVO> users = userDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(UserMapper.INSTANCE::toUserVO).collect(Collectors.toList());
         List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
         for (UserVO user: users){
-            List<OrderVO> orders = listOrders(user.getUsername());
-            for(OrderVO orderVO: orders){
-                orderDetailVOS.add(OrderDetailVO.builder()
-                                .id(orderVO.getId())
-                                .username(user.getUsername())
-                                .idn(user.getIdn())
-                                .trainId(orderVO.getTrainId())
-                                .originalPrice(orderVO.getOriginalPrice())
-                                .caculatedPrice(orderVO.getCaculatedPrice())
-                                .startStationId(orderVO.getStartStationId())
-                                .endStationId(orderVO.getEndStationId())
-                                .departureTime(orderVO.getDepartureTime())
-                                .arrivalTime(orderVO.getArrivalTime())
-                                .consumeMileagePoints(orderVO.getConsumeMileagePoints())
-                                .status(orderVO.getStatus())
-                                .createdAt(orderVO.getCreatedAt())
-                                .seat(orderVO.getSeat())
-                                .build());
-            }
+            List<OrderDetailVO> orders = listOrders(user.getUsername());
+            orderDetailVOS.addAll(orders);
         }
         return orderDetailVOS;
     }
 
-    public OrderVO getOrder(Long id) {
+    public OrderDetailVO getOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();
+        UserEntity user = userDao.findById(order.getUserId()).get();
         TrainEntity train = trainDao.findById(order.getTrainId()).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         int startIndex = route.getStationIds().indexOf(order.getDepartureStationId());
         int endIndex = route.getStationIds().indexOf(order.getArrivalStationId());
-        return OrderVO.builder().id(order.getId()).trainId(order.getTrainId())
+        return OrderDetailVO.builder().id(order.getId())
+                .name(user.getName())
+                .idn(user.getIdn())
+                .trainId(order.getTrainId())
                 .seat(order.getSeat()).status(order.getStatus().getText())
                 .originalPrice(order.getOriginalPrice())
                 .consumeMileagePoints(order.getConsumeMileagePoints())
