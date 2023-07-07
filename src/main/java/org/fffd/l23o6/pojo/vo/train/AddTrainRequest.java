@@ -13,6 +13,11 @@ import org.fffd.l23o6.pojo.enum_.TrainType;
 @Data
 @Schema(description = "添加车次请求")
 public class AddTrainRequest {
+//    @Schema(description = "车票信息", required = true)
+//    @NotNull
+//    @Pattern(regexp = "^((软卧|硬卧|软座|硬座)|(商务座|一等座|二等座|无座) \s* ([0-9][0-9]{0,1}|100) \s* ([0-9][0-9]{0,1}|100))$ ")
+//    @Size(min = 1, max = 4, message = "车票信息包括类型、数量、价格")
+//    private List<String> ticketInfo;
 
     @Schema(description = "车次名", required = true)
     @NotNull

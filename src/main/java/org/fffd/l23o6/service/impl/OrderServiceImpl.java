@@ -17,6 +17,7 @@ import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 import org.fffd.l23o6.pojo.enum_.PaymentType;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
+import org.fffd.l23o6.pojo.vo.train.TicketInfo;
 import org.fffd.l23o6.service.OrderService;
 import org.fffd.l23o6.util.strategy.DiscountStrategy;
 import org.fffd.l23o6.util.strategy.payment.AlipayPaymentStrategy;
@@ -53,32 +54,14 @@ public class OrderServiceImpl implements OrderService {
         int endStationIndex = route.getStationIds().indexOf(toStationId);
         int miles = endStationIndex - startStationIndex;
 
-        switch (seatType) {
-            case "软卧":
-                moneyPerStation = 250;
-                break;
-            case "硬卧":
-                moneyPerStation = 200;
-                break;
-            case "软座":
-                moneyPerStation = 150;
-                break;
-            case "硬座":
-                moneyPerStation = 100;
-                break;
-            case "商务座":
-                moneyPerStation = 200;
-                break;
-            case "一等座":
-                moneyPerStation = 150;
-                break;
-            case "二等座":
-                moneyPerStation = 100;
-                break;
-            case "无座":
-                moneyPerStation = 50;
-                break;
-        }
+//        List<TicketInfo> ticketInfos = train.ticketInfos;
+//        for (TicketInfo ticketInfo: ticketInfos){
+//            if (ticketInfo.getType().equals(seatType)){
+//                moneyPerStation = ticketInfo.getPrice();
+//                ticketInfo.setCount(ticketInfo.getCount() - 1);
+//                break;
+//            }
+//        }
         String seat = null;
         int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
