@@ -56,14 +56,32 @@ public class OrderServiceImpl implements OrderService {
         int endStationIndex = route.getStationIds().indexOf(toStationId);
         int miles = endStationIndex - startStationIndex;
 
-//        List<TicketInfo> ticketInfos = train.ticketInfos;
-//        for (TicketInfo ticketInfo: ticketInfos){
-//            if (ticketInfo.getType().equals(seatType)){
-//                moneyPerStation = ticketInfo.getPrice();
-//                ticketInfo.setCount(ticketInfo.getCount() - 1);
-//                break;
-//            }
-//        }
+        switch (seatType) {
+            case "软卧":
+                moneyPerStation = 250;
+                break;
+            case "硬卧":
+                moneyPerStation = 200;
+                break;
+            case "软座":
+                moneyPerStation = 150;
+                break;
+            case "硬座":
+                moneyPerStation = 100;
+                break;
+            case "商务座":
+                moneyPerStation = 200;
+                break;
+            case "一等座":
+                moneyPerStation = 150;
+                break;
+            case "二等座":
+                moneyPerStation = 100;
+                break;
+            case "无座":
+                moneyPerStation = 50;
+                break;
+        }
         String seat = null;
         int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
