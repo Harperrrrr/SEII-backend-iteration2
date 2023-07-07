@@ -45,7 +45,7 @@ public class TrainEntity {
 
     @NotNull
     @Type(BooleanArrayType.class)
-    @Column(name = "save", columnDefinition = "boolean[][]")
+    @Column(name = "save_seats", columnDefinition = "boolean[][]")
     public boolean[][] saveSeats;
 
     @NotNull

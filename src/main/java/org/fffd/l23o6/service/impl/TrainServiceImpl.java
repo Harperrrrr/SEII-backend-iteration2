@@ -115,11 +115,11 @@ public class TrainServiceImpl implements TrainService {
         switch (entity.getTrainType()) {
             case HIGH_SPEED:
                 entity.setSeats(GSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
-                entity.setSaveSeats(entity.getSeats());
+                entity.setSaveSeats(GSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
                 break;
             case NORMAL_SPEED:
                 entity.setSeats(KSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
-                entity.setSaveSeats(entity.getSeats());
+                entity.setSaveSeats(KSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
                 break;
         }
         trainDao.save(entity);
@@ -173,6 +173,7 @@ public class TrainServiceImpl implements TrainService {
     public void saveSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat) {
         TrainEntity train = trainDao.findById(trainId).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        System.out.println("here "+businessSeat);
         for (int i = 0; i < businessSeat; i++) {
             String seat =
                     GSeriesSeatStrategy.INSTANCE.allocSeat(0,
@@ -182,6 +183,7 @@ public class TrainServiceImpl implements TrainService {
             for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
                 train.seats[j][count] = true;
                 train.saveSeats[j][count] = true;
+                System.out.println("here1 "+count);
             }
         }
         for (int i = 0; i < firstClassSeat; i++) {
@@ -193,6 +195,8 @@ public class TrainServiceImpl implements TrainService {
             for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
                 train.seats[j][count] = true;
                 train.saveSeats[j][count] = true;
+                System.out.println("here2 "+count);
+
             }
         }
         for (int i = 0; i < secondClassSeat; i++) {
@@ -204,8 +208,11 @@ public class TrainServiceImpl implements TrainService {
             for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
                 train.seats[j][count] = true;
                 train.saveSeats[j][count] = true;
+                System.out.println("here3 "+count);
+
             }
         }
+        train.setUpdatedAt(null);
         trainDao.save(train);
     }
 
@@ -257,6 +264,7 @@ public class TrainServiceImpl implements TrainService {
                 train.saveSeats[j][count] = true;
             }
         }
+        train.setUpdatedAt(null);
         trainDao.save(train);
     }
 
@@ -313,6 +321,7 @@ public class TrainServiceImpl implements TrainService {
 
         train.setSaveSeats(saveMap);
         train.setSeats(seatMap);
+        train.setUpdatedAt(null);
         trainDao.save(train);
     }
 
@@ -382,6 +391,7 @@ public class TrainServiceImpl implements TrainService {
         }
         train.setSaveSeats(saveMap);
         train.setSeats(seatMap);
+        train.setUpdatedAt(null);
         trainDao.save(train);
     }
 
@@ -411,6 +421,7 @@ public class TrainServiceImpl implements TrainService {
                 }
             }
         }
+        System.out.println("aa"+result[0]+" "+result[1]+" "+result[2]);
         return result;
     }
 
