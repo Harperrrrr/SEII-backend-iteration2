@@ -90,4 +90,14 @@ public class TrainController {
         trainService.releaseSeatsG(trainId,businessSeat,firstClassSeat,secondClassSeat);
         return CommonResponse.success();
     }
+
+    @GetMapping("seat/save/G/{trainId}")
+    public CommonResponse<?> getSaveNumG(@PathVariable Long trainId) {
+        return CommonResponse.success(trainService.getSeatsNumG(trainId));
+    }
+
+    @GetMapping("seat/save/K/{trainId}")
+    public CommonResponse<?> getSaveNumK(@PathVariable Long trainId) {
+        return CommonResponse.success(trainService.getSeatsNumK(trainId));
+    }
 }

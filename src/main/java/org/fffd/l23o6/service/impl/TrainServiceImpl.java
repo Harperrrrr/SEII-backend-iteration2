@@ -373,4 +373,65 @@ public class TrainServiceImpl implements TrainService {
         train.setSeats(seatMap);
         trainDao.save(train);
     }
+
+    @Override
+    public int[] getSeatsNumG(Long trainId) {
+        int[] result = {0,0,0};
+        boolean[][] saveMap = trainDao.findById(trainId).get().getSaveSeats();
+        Map<GSeriesSeatStrategy.GSeriesSeatType, Map<Integer, String>> typeMap
+                = GSeriesSeatStrategy.INSTANCE.TYPE_MAP;
+        List<GSeriesSeatStrategy.GSeriesSeatType> types = new ArrayList<>(typeMap.keySet());
+        for(GSeriesSeatStrategy.GSeriesSeatType type:types){
+            Map<Integer, String> map = typeMap.get(type);
+            List<Integer> seatCount = new ArrayList<>(map.keySet());
+            for(Integer i:seatCount){
+                if(saveMap[0][i]){
+                    switch (type){
+                        case BUSINESS_SEAT:
+                            result[0]++;
+                            break;
+                        case FIRST_CLASS_SEAT:
+                            result[1]++;
+                            break;
+                        case SECOND_CLASS_SEAT:
+                            result[2]++;
+                            break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public int[] getSeatsNumK(Long trainId) {
+        int[] result = {0,0,0,0};
+        boolean[][] saveMap = trainDao.findById(trainId).get().getSaveSeats();
+        Map<KSeriesSeatStrategy.KSeriesSeatType, Map<Integer, String>> typeMap
+                = KSeriesSeatStrategy.INSTANCE.TYPE_MAP;
+        List<KSeriesSeatStrategy.KSeriesSeatType> types = new ArrayList<>(typeMap.keySet());
+        for(KSeriesSeatStrategy.KSeriesSeatType type:types){
+            Map<Integer, String> map = typeMap.get(type);
+            List<Integer> seatCount = new ArrayList<>(map.keySet());
+            for(Integer i:seatCount){
+                if(saveMap[0][i]){
+                    switch (type){
+                        case SOFT_SLEEPER_SEAT:
+                            result[0]++;
+                            break;
+                        case HARD_SLEEPER_SEAT:
+                            result[1]++;
+                            break;
+                        case SOFT_SEAT:
+                            result[2]++;
+                            break;
+                        case HARD_SEAT:
+                            result[3]++;
+                            break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
