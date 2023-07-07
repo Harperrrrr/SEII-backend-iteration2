@@ -8,6 +8,7 @@ import org.fffd.l23o6.pojo.enum_.TrainType;
 import org.fffd.l23o6.pojo.vo.train.AdminTrainVO;
 import org.fffd.l23o6.pojo.vo.train.TrainDetailVO;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface TrainService {
     public TrainDetailVO getTrain(Long trainId);
@@ -26,5 +27,6 @@ public interface TrainService {
 
     public void changeTrainStatus(Long trainId,int stationIdx);
 
-    public void saveSeats(Long trainId, SeatType seatType,int saveNum);
+    public void saveSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat);
+    public void saveSeatsK(Long trainId,int softSleepSeat,int hardSleepSeat,int softSeat,int hardSeat);
 }

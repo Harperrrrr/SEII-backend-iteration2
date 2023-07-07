@@ -33,6 +33,7 @@ public class TrainServiceImpl implements TrainService {
     private final TrainDao trainDao;
     private final RouteDao routeDao;
     private final MyTrainMapper myTrainMapper;
+
     @Override
     public TrainDetailVO getTrain(Long trainId) {
         TrainEntity train = trainDao.findById(trainId).get();
@@ -77,8 +78,8 @@ public class TrainServiceImpl implements TrainService {
                 boolean sameDay = calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH)
                         && calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH);
 
-                if(sameDay){
-                    result.add(myTrainMapper.toTrainVO(train,startStationId,endStationId));
+                if (sameDay) {
+                    result.add(myTrainMapper.toTrainVO(train, startStationId, endStationId));
                 }
             }
         }
@@ -145,24 +146,104 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public void changeTrainStatus(Long trainId,int stationIdx) {
+    public void changeTrainStatus(Long trainId, int stationIdx) {
         TrainEntity entity = trainDao.findById(trainId).get();
         List<String> extraInfos = entity.getExtraInfos();
-        if(extraInfos.get(stationIdx).equals("预计正点")){
-            extraInfos.set(stationIdx,"预计晚点");
-        }else{
-            extraInfos.set(stationIdx,"预计正点");
+        if (extraInfos.get(stationIdx).equals("预计正点")) {
+            extraInfos.set(stationIdx, "预计晚点");
+        } else {
+            extraInfos.set(stationIdx, "预计正点");
         }
         entity.setExtraInfos(extraInfos);
         trainDao.save(entity);
     }
 
     @Override
-    public void saveSeats(Long trainId, SeatType seatType, int saveNum) {
+    public void saveSeatsG(Long trainId, int businessSeat, int firstClassSeat, int secondClassSeat) {
         TrainEntity train = trainDao.findById(trainId).get();
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
-        if(train.getTrainType().getText().equals("高铁")){
-//            GSeriesSeatStrategy.INSTANCE.allocSeat(0,route.getStationIds().size()-1,)
+        for (int i = 0; i < businessSeat; i++) {
+            String seat =
+                    GSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            GSeriesSeatStrategy.GSeriesSeatType.BUSINESS_SEAT, train.getSeats());
+            int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+        for (int i = 0; i < firstClassSeat; i++) {
+            String seat =
+                    GSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            GSeriesSeatStrategy.GSeriesSeatType.FIRST_CLASS_SEAT, train.getSeats());
+            int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+        for (int i = 0; i < secondClassSeat; i++) {
+            String seat =
+                    GSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            GSeriesSeatStrategy.GSeriesSeatType.SECOND_CLASS_SEAT, train.getSeats());
+            int count = GSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+    }
+
+    @Override
+    public void saveSeatsK(Long trainId, int softSleepSeat, int hardSleepSeat, int softSeat, int hardSeat) {
+        TrainEntity train = trainDao.findById(trainId).get();
+        RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        for (int i = 0; i < softSleepSeat; i++) {
+            String seat =
+                    KSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            KSeriesSeatStrategy.KSeriesSeatType.SOFT_SLEEPER_SEAT, train.getSeats());
+            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+        for (int i = 0; i < hardSleepSeat; i++) {
+            String seat =
+                    KSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            KSeriesSeatStrategy.KSeriesSeatType.HARD_SLEEPER_SEAT, train.getSeats());
+            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+        for (int i = 0; i < softSeat; i++) {
+            String seat =
+                    KSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            KSeriesSeatStrategy.KSeriesSeatType.SOFT_SEAT, train.getSeats());
+            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
+        }
+        for (int i = 0; i < hardSeat; i++) {
+            String seat =
+                    KSeriesSeatStrategy.INSTANCE.allocSeat(0,
+                            route.getStationIds().size() - 1,
+                            KSeriesSeatStrategy.KSeriesSeatType.HARD_SEAT, train.getSeats());
+            int count = KSeriesSeatStrategy.INSTANCE.SEAT_MAP.get(seat);
+            for (int j = 0; j < route.getStationIds().size() - 1; ++j) {
+                train.seats[j][count] = true;
+                train.saveSeats[j][count] = true;
+            }
         }
     }
 }

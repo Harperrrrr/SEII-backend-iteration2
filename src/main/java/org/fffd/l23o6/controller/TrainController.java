@@ -73,9 +73,15 @@ public class TrainController {
         return CommonResponse.success();
     }
 
-    @GetMapping("seat/save")
-    public CommonResponse<?> saveSeat(@Valid @RequestBody SaveSeatRequest request) {
-        trainService.saveSeats(request.getTrainId(), request.getSeatType(), request.getSaveNum());
+    @GetMapping("seat/save/G")
+    public CommonResponse<?> saveSeatG(@RequestParam Long trainId,@RequestParam int businessSeat,@RequestParam int firstClassSeat,@RequestParam int secondClassSeat) {
+        trainService.saveSeatsG(trainId,businessSeat,firstClassSeat,secondClassSeat);
+        return CommonResponse.success();
+    }
+
+    @GetMapping("seat/save/K")
+    public CommonResponse<?> saveSeatK(@RequestParam Long trainId,@RequestParam int softSleepSeat,@RequestParam int hardSleepSeat,@RequestParam int softSeat,@RequestParam int hardSeat) {
+        trainService.saveSeatsK(trainId,softSleepSeat,hardSleepSeat,softSeat,hardSeat);
         return CommonResponse.success();
     }
 }
