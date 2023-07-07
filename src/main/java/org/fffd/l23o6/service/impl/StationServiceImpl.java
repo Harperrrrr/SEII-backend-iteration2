@@ -22,7 +22,11 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public StationVO getStation(Long stationId) {
-        return StationMapper.INSTANCE.toStationVO(stationDao.findById(stationId).get());
+        StationEntity entity = stationDao.findById(stationId).get();
+        if (entity == null) {
+            throw new BizException(BizError.ILLEGAL_STATION_ID);
+        }
+        return StationMapper.INSTANCE.toStationVO(entity);
     }
 
     @Override

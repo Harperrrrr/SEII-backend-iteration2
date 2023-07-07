@@ -49,14 +49,13 @@ public class UserServiceImpl implements UserService {
                 .name(name).idn(idn).phone(phone).type(type).mileagePoints(0).build());
     }
 
-    @Override
-    public UserEntity findByUserName(String username) {
-        return userDao.findByUsername(username);
-    }
 
     @Override
     public UserVO findByIdn(String idn) {
         UserEntity user = userDao.findByIdn(idn);
+        if (user == null) {
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "用户不存在");
+        }
         return myUserMapper.toUserVO(user);
     }
 
@@ -83,6 +82,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO getUser(String username) {
         UserEntity user = userDao.findByUsername(username);
+        if (user == null) {
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "用户不存在");
+        }
         return myUserMapper.toUserVO(user);
     }
 }

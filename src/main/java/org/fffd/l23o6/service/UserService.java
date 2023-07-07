@@ -7,8 +7,11 @@ public interface UserService {
     void login(String username, String password, String userType);
     void register(String userType, String username, String password, String name, String idn, String phone, String type);
 
-    UserEntity findByUserName(String username);
-
+    /**
+     * input : idn
+     * output : UserVO
+     * find User By Idn
+     */
     UserVO findByIdn(String idn);
     void editInfo(String username, String name, String idn, String phone, String type);
     UserVO getUser(String username);

@@ -14,7 +14,11 @@ public interface TrainService {
     public TrainDetailVO getTrain(Long trainId);
 
     public List<TrainVO> listTrains(Long startStationId, Long endStationId, String date);
-
+    /**
+     * input :
+     * output : List<AdminTrainVO>
+     * Managers find all the detailed Train Information
+     */
     public List<AdminTrainVO> listTrainsAdmin();
 
     public void addTrain(String name, Long routeId, TrainType type, String date, List<Date> arrivalTimes,

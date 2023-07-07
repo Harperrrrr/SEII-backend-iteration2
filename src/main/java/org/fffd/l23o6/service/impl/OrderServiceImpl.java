@@ -192,10 +192,6 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
-    @Override
-    public List<OrderVO> listOrdersByTrainID(Long trainID) {
-        return null;
-    }
 
     public void cancelOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();

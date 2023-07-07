@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
+import org.fffd.l23o6.exception.BizError;
 import org.fffd.l23o6.mapper.MyTrainMapper;
 import org.fffd.l23o6.mapper.TrainMapper;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
@@ -37,6 +38,9 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public TrainDetailVO getTrain(Long trainId) {
         TrainEntity train = trainDao.findById(trainId).get();
+        if (train == null){
+            throw new BizException(BizError.ILLEGAL_TRAIN_ID);
+        }
         RouteEntity route = routeDao.findById(train.getRouteId()).get();
         return TrainDetailVO.builder().id(trainId).date(train.getDate()).name(train.getName())
                 .stationIds(route.getStationIds()).arrivalTimes(train.getArrivalTimes())
@@ -95,6 +99,10 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public void addTrain(String name, Long routeId, TrainType type, String date, List<Date> arrivalTimes,
                          List<Date> departureTimes) {
+        TrainEntity trainEntity = trainDao.findTrainByName(name);
+        if(trainEntity != null){
+            throw new BizException(BizError.TRAINID_EXISTS);
+        }
         TrainEntity entity = TrainEntity.builder().name(name).routeId(routeId).trainType(type)
                 .date(date).arrivalTimes(arrivalTimes).departureTimes(departureTimes).build();
         RouteEntity route = routeDao.findById(routeId).get();
@@ -121,6 +129,9 @@ public class TrainServiceImpl implements TrainService {
     public void changeTrain(Long id, String name, Long routeId, TrainType type, String date, List<Date> arrivalTimes,
                             List<Date> departureTimes) {
         TrainEntity entity = trainDao.findById(id).get();
+        if (entity == null) {
+            throw new BizException(BizError.ILLEGAL_TRAIN_ID);
+        }
         RouteEntity route = routeDao.findById(routeId).get();
 
         entity.setName(name);
