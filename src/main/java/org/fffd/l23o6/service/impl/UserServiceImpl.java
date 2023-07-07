@@ -56,7 +56,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO findByIdn(String idn) {
-        return myUserMapper.toUserVO(userDao.findByIdn(idn));
+        UserEntity user = userDao.findByIdn(idn);
+        return myUserMapper.toUserVO(user);
     }
 
     @Override

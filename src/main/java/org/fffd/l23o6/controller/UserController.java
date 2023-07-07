@@ -67,9 +67,10 @@ public class UserController {
         return CommonResponse.success(user);
     }
 
-    @PostMapping("findUserByIdn")
-    public CommonResponse<UserVO> findUserByIdn(String idn){
-        return CommonResponse.success(userService.findByIdn(idn));
+    @GetMapping("findUserByIdn/{idn}")
+    public CommonResponse<UserVO> findUserByIdn(@PathVariable("idn") String idn){
+        UserVO user = userService.findByIdn(idn);
+        return CommonResponse.success(user);
     }
 
     @PutMapping("user")
