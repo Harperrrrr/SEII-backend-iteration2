@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import org.fffd.l23o6.pojo.enum_.PaymentType;
-import org.fffd.l23o6.pojo.vo.order.CreateOrderRequest;
-import org.fffd.l23o6.pojo.vo.order.OrderIdVO;
-import org.fffd.l23o6.pojo.vo.order.OrderVO;
-import org.fffd.l23o6.pojo.vo.order.PatchOrderRequest;
+import org.fffd.l23o6.pojo.vo.order.*;
 import org.fffd.l23o6.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +32,12 @@ public class OrderController {
     public CommonResponse<List<OrderVO>> listOrders(){
         StpUtil.checkLogin();
         return CommonResponse.success(orderService.listOrders(StpUtil.getLoginIdAsString()));
+    }
+
+    @GetMapping("allOrder")
+    public CommonResponse<List<OrderDetailVO>> listAllOrders(){
+        StpUtil.checkLogin();
+        return CommonResponse.success(orderService.listAllOrders());
     }
 
     @GetMapping("order/{orderId}")
@@ -62,6 +65,12 @@ public class OrderController {
     @PostMapping("order/{orderId}")
     public CommonResponse<?> payOrder(@PathVariable("orderId") Long orderId,@RequestParam("type") int type) {
         orderService.payOrder(orderId,type);
+        return CommonResponse.success();
+    }
+
+    @PostMapping("completeOrder/{orderId}")
+    public CommonResponse<?> completeOrder(@PathVariable("orderId") Long orderId) {
+        orderService.completeOrder(orderId);
         return CommonResponse.success();
     }
 

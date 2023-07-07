@@ -1,5 +1,6 @@
 package org.fffd.l23o6.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,7 @@ import org.fffd.l23o6.dao.OrderDao;
 import org.fffd.l23o6.dao.RouteDao;
 import org.fffd.l23o6.dao.TrainDao;
 import org.fffd.l23o6.dao.UserDao;
+import org.fffd.l23o6.mapper.*;
 import org.fffd.l23o6.pojo.entity.UserEntity;
 import org.fffd.l23o6.pojo.enum_.OrderStatus;
 import org.fffd.l23o6.exception.BizError;
@@ -14,7 +16,10 @@ import org.fffd.l23o6.pojo.entity.OrderEntity;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 import org.fffd.l23o6.pojo.enum_.PaymentType;
+import org.fffd.l23o6.pojo.vo.order.OrderDetailVO;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
+import org.fffd.l23o6.pojo.vo.train.TicketInfo;
+import org.fffd.l23o6.pojo.vo.user.UserVO;
 import org.fffd.l23o6.service.OrderService;
 import org.fffd.l23o6.util.strategy.DiscountStrategy;
 import org.fffd.l23o6.util.strategy.payment.AlipayPaymentStrategy;
@@ -22,6 +27,7 @@ import org.fffd.l23o6.util.strategy.payment.PaymentStrategy;
 import org.fffd.l23o6.util.strategy.payment.WeChatPaymentStrategy;
 import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
 import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.github.lyc8503.spring.starter.incantation.exception.BizException;
@@ -50,32 +56,14 @@ public class OrderServiceImpl implements OrderService {
         int endStationIndex = route.getStationIds().indexOf(toStationId);
         int miles = endStationIndex - startStationIndex;
 
-        switch (seatType) {
-            case "软卧":
-                moneyPerStation = 250;
-                break;
-            case "硬卧":
-                moneyPerStation = 200;
-                break;
-            case "软座":
-                moneyPerStation = 150;
-                break;
-            case "硬座":
-                moneyPerStation = 100;
-                break;
-            case "商务座":
-                moneyPerStation = 200;
-                break;
-            case "一等座":
-                moneyPerStation = 150;
-                break;
-            case "二等座":
-                moneyPerStation = 100;
-                break;
-            case "无座":
-                moneyPerStation = 50;
-                break;
-        }
+//        List<TicketInfo> ticketInfos = train.ticketInfos;
+//        for (TicketInfo ticketInfo: ticketInfos){
+//            if (ticketInfo.getType().equals(seatType)){
+//                moneyPerStation = ticketInfo.getPrice();
+//                ticketInfo.setCount(ticketInfo.getCount() - 1);
+//                break;
+//            }
+//        }
         String seat = null;
         int originalPrice = moneyPerStation * miles;
         switch (train.getTrainType()) {
@@ -147,6 +135,34 @@ public class OrderServiceImpl implements OrderService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public List<OrderDetailVO> listAllOrders() {
+        List<UserVO> users = userDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(UserMapper.INSTANCE::toUserVO).collect(Collectors.toList());
+        List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
+        for (UserVO user: users){
+            List<OrderVO> orders = listOrders(user.getUsername());
+            for(OrderVO orderVO: orders){
+                orderDetailVOS.add(OrderDetailVO.builder()
+                                .id(orderVO.getId())
+                                .username(user.getUsername())
+                                .idn(user.getIdn())
+                                .trainId(orderVO.getTrainId())
+                                .originalPrice(orderVO.getOriginalPrice())
+                                .caculatedPrice(orderVO.getCaculatedPrice())
+                                .startStationId(orderVO.getStartStationId())
+                                .endStationId(orderVO.getEndStationId())
+                                .departureTime(orderVO.getDepartureTime())
+                                .arrivalTime(orderVO.getArrivalTime())
+                                .consumeMileagePoints(orderVO.getConsumeMileagePoints())
+                                .status(orderVO.getStatus())
+                                .createdAt(orderVO.getCreatedAt())
+                                .seat(orderVO.getSeat())
+                                .build());
+            }
+        }
+        return orderDetailVOS;
+    }
+
     public OrderVO getOrder(Long id) {
         OrderEntity order = orderDao.findById(id).get();
         TrainEntity train = trainDao.findById(order.getTrainId()).get();
@@ -164,6 +180,11 @@ public class OrderServiceImpl implements OrderService {
                 .departureTime(train.getDepartureTimes().get(startIndex))
                 .arrivalTime(train.getArrivalTimes().get(endIndex))
                 .build();
+    }
+
+    @Override
+    public List<OrderVO> listOrdersByTrainID(Long trainID) {
+        return null;
     }
 
     public void cancelOrder(Long id) {
@@ -255,6 +276,17 @@ public class OrderServiceImpl implements OrderService {
         user.setMileagePoints((int) (user.getMileagePoints() + order.getGenerateMileagePoints()));
 
         userDao.save(user);
+
+        order.setStatus(OrderStatus.PAID);
+        orderDao.save(order);
+    }
+
+    @Override
+    public void completeOrder(Long id) {
+        OrderEntity order = orderDao.findById(id).get();
+        if (order.getStatus() != OrderStatus.PAID){
+            throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);
+        }
 
         order.setStatus(OrderStatus.COMPLETED);
         orderDao.save(order);

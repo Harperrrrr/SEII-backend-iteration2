@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import org.fffd.l23o6.pojo.enum_.TrainType;
+import org.fffd.l23o6.pojo.vo.train.TicketInfo;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -41,9 +42,11 @@ public class TrainEntity {
     @Type(BooleanArrayType.class)
     @Column(name = "seats", columnDefinition = "boolean[][]")
     public boolean[][] seats;
-
     @NotNull
     public int noSeatNum;
+
+//    @NotNull
+//    public List<TicketInfo> ticketInfos;
 
     @NotNull
     private TrainType trainType;
