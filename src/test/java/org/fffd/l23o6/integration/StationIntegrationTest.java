@@ -71,7 +71,9 @@ public class StationIntegrationTest {
     public void testEditStation(){
         AddStationRequest request = new AddStationRequest();
         request.setName("testStation");
-        stationController.editStation(1L,request);
+
+        Assertions.assertEquals(200,stationController
+                .editStation(1L,request).getHttpCode());
 
         Mockito.verify(stationService, Mockito.times(1)).
                 editStation(1L,request.getName());

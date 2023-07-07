@@ -70,7 +70,9 @@ public class RouteIntegrationTest {
     public void testEditRoute(){
         AddRouteRequest request = new AddRouteRequest();
         request.setName("testRoute");
-        routeController.editRoute(1L,request);
+
+        Assertions.assertEquals(200,routeController
+                .editRoute(1L,request).getHttpCode());
 
         Mockito.verify(routeService, Mockito.times(1)).
                 editRoute(1L,request.getName(),request.getStationIds());

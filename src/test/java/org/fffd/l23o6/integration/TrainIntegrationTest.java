@@ -86,7 +86,9 @@ public class TrainIntegrationTest {
         request.setTrainType(TrainType.HIGH_SPEED);
         request.setName("testTrain");
         request.setRouteId(1L);
-        trainController.addTrain(request);
+
+        Assertions.assertEquals(200,trainController
+                .addTrain(request).getHttpCode());
 
         Mockito.verify(trainService, Mockito.times(1)).
                 addTrain(request.getName(),request.getRouteId(),request.getTrainType(),
