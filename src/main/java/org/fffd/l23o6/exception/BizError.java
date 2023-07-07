@@ -13,8 +13,9 @@ public enum BizError implements ErrorType {
     INVALID_IDENTITY(200004, "用户身份不匹配", 400),
     STATIONNAME_EXISTS(200003, "同名站点已存在", 400),
     OUT_OF_SEAT(300001, "无可用座位", 400),
-    ILLEAGAL_ORDER_STATUS(400001, "非法的订单状态", 400);
+    ILLEAGAL_ORDER_STATUS(400001, "非法的订单状态", 400),
 
+    ILLEGAL_STATION_ID(500001,"不存在的车站",400);
 
     final int code;
     final String message;

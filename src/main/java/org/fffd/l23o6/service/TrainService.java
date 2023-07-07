@@ -3,6 +3,7 @@ package org.fffd.l23o6.service;
 import java.util.Date;
 import java.util.List;
 
+import org.fffd.l23o6.pojo.enum_.SeatType;
 import org.fffd.l23o6.pojo.enum_.TrainType;
 import org.fffd.l23o6.pojo.vo.train.AdminTrainVO;
 import org.fffd.l23o6.pojo.vo.train.TrainDetailVO;
@@ -24,4 +25,6 @@ public interface TrainService {
     public void deleteTrain(Long trainId);
 
     public void changeTrainStatus(Long trainId,int stationIdx);
+
+    public void saveSeats(Long trainId, SeatType seatType,int saveNum);
 }

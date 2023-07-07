@@ -6,6 +6,7 @@ import org.fffd.l23o6.controller.OrderController;
 import org.fffd.l23o6.controller.RouteController;
 import org.fffd.l23o6.controller.TrainController;
 import org.fffd.l23o6.pojo.enum_.TrainType;
+import org.fffd.l23o6.pojo.vo.order.OrderDetailVO;
 import org.fffd.l23o6.pojo.vo.order.OrderVO;
 import org.fffd.l23o6.pojo.vo.route.AddRouteRequest;
 import org.fffd.l23o6.pojo.vo.route.RouteVO;
@@ -45,12 +46,12 @@ public class OrderIntegrationTest {
     @Test
     public void testGetOrder() {
         long orderId = 1L;
-        OrderVO.OrderVOBuilder orderVO = OrderVO.builder();
+        OrderDetailVO.OrderDetailVOBuilder orderVO = OrderDetailVO.builder();
         orderVO.id(orderId);
         Mockito.when(orderService.getOrder(orderId)).thenReturn(orderVO.build());
         Mockito.when(orderService.getOrder(2L)).thenReturn(null);
 
-        CommonResponse<OrderVO> response = orderController.getOrder(orderId);
+        CommonResponse<OrderDetailVO> response = orderController.getOrder(orderId);
         Assertions.assertEquals(orderVO.build(),response.getData());
 
         response = orderController.getOrder(2L);

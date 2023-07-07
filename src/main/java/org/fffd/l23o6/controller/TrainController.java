@@ -1,14 +1,20 @@
 package org.fffd.l23o6.controller;
 
 import java.util.List;
+
 import io.github.lyc8503.spring.starter.incantation.pojo.CommonResponse;
 
+import org.fffd.l23o6.pojo.entity.TrainEntity;
+import org.fffd.l23o6.pojo.vo.seat.SaveSeatRequest;
 import org.fffd.l23o6.pojo.vo.train.AddTrainRequest;
 import org.fffd.l23o6.pojo.vo.train.AdminTrainVO;
 import org.fffd.l23o6.pojo.vo.train.ListTrainRequest;
 import org.fffd.l23o6.pojo.vo.train.TrainDetailVO;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
 import org.fffd.l23o6.service.TrainService;
+import org.fffd.l23o6.util.strategy.train.GSeriesSeatStrategy;
+import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
+import org.fffd.l23o6.util.strategy.train.TrainSeatStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -33,7 +39,7 @@ public class TrainController {
     }
 
     @PostMapping("admin/train")
-    public CommonResponse<?> addTrain(@Valid @RequestBody AddTrainRequest request){
+    public CommonResponse<?> addTrain(@Valid @RequestBody AddTrainRequest request) {
         trainService.addTrain(request.getName(), request.getRouteId(), request.getTrainType(), request.getDate(), request.getArrivalTimes(), request.getDepartureTimes());
         return CommonResponse.success();
     }
@@ -47,14 +53,14 @@ public class TrainController {
     public CommonResponse<AdminTrainVO> getTrainAdmin(@PathVariable Long trainId) {
         return CommonResponse.success();
     }
-    
+
     @PutMapping("admin/train/{trainId}")
     public CommonResponse<?> changeTrain(@PathVariable Long trainId, @Valid @RequestBody AddTrainRequest request) {
         trainService.changeTrain(trainId, request.getName(), request.getRouteId(), request.getTrainType(),
                 request.getDate(), request.getArrivalTimes(), request.getDepartureTimes());
         return CommonResponse.success();
     }
-    
+
     @DeleteMapping("admin/train/{trainId}")
     public CommonResponse<?> deleteTrain(@PathVariable Long trainId) {
         trainService.deleteTrain(trainId);
@@ -63,7 +69,13 @@ public class TrainController {
 
     @PutMapping("admin/train/change/{trainId}")
     public CommonResponse<?> changeTrainStatus(@PathVariable Long trainId, @RequestParam int stationIdx) {
-        trainService.changeTrainStatus(trainId,stationIdx);
+        trainService.changeTrainStatus(trainId, stationIdx);
+        return CommonResponse.success();
+    }
+
+    @GetMapping("seat/save")
+    public CommonResponse<?> saveSeat(@Valid @RequestBody SaveSeatRequest request) {
+        trainService.saveSeats(request.getTrainId(), request.getSeatType(), request.getSaveNum());
         return CommonResponse.success();
     }
 }

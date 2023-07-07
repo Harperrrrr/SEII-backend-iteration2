@@ -42,9 +42,9 @@ public class StationServiceImpl implements StationService {
     @Override
     public void editStation(Long id, String name) {
         StationEntity entity = stationDao.findById(id).get();
-//        if (entity == null) {
-//            throw new BizException(BizError.);
-//        }
+        if (entity == null) {
+            throw new BizException(BizError.ILLEGAL_STATION_ID);
+        }
         entity.setName(name);
         stationDao.save(entity);
     }

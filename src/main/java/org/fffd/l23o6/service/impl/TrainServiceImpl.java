@@ -12,6 +12,7 @@ import org.fffd.l23o6.mapper.MyTrainMapper;
 import org.fffd.l23o6.mapper.TrainMapper;
 import org.fffd.l23o6.pojo.entity.RouteEntity;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
+import org.fffd.l23o6.pojo.enum_.SeatType;
 import org.fffd.l23o6.pojo.enum_.TrainType;
 import org.fffd.l23o6.pojo.vo.train.AdminTrainVO;
 import org.fffd.l23o6.pojo.vo.train.TrainVO;
@@ -105,9 +106,11 @@ public class TrainServiceImpl implements TrainService {
         switch (entity.getTrainType()) {
             case HIGH_SPEED:
                 entity.setSeats(GSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
+                entity.setSaveSeats(entity.getSeats());
                 break;
             case NORMAL_SPEED:
                 entity.setSeats(KSeriesSeatStrategy.INSTANCE.initSeatMap(route.getStationIds().size()));
+                entity.setSaveSeats(entity.getSeats());
                 break;
         }
         trainDao.save(entity);
@@ -152,5 +155,14 @@ public class TrainServiceImpl implements TrainService {
         }
         entity.setExtraInfos(extraInfos);
         trainDao.save(entity);
+    }
+
+    @Override
+    public void saveSeats(Long trainId, SeatType seatType, int saveNum) {
+        TrainEntity train = trainDao.findById(trainId).get();
+        RouteEntity route = routeDao.findById(train.getRouteId()).get();
+        if(train.getTrainType().getText().equals("高铁")){
+//            GSeriesSeatStrategy.INSTANCE.allocSeat(0,route.getStationIds().size()-1,)
+        }
     }
 }
