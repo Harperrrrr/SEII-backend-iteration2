@@ -2,6 +2,8 @@ package org.fffd.l23o6.util.strategy.train;
 
 import java.util.*;
 
+import io.github.lyc8503.spring.starter.incantation.exception.BizException;
+import io.github.lyc8503.spring.starter.incantation.exception.CommonErrorType;
 import jakarta.annotation.Nullable;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 
@@ -94,6 +96,12 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
     }
 
     public Map<GSeriesSeatType, Integer> getLeftSeatCount(int startStationIndex, int endStationIndex, boolean[][] seatMap) {
+        if(startStationIndex >= endStationIndex){
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"起点与终点不合法");
+        }
+        if(seatMap == null){
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"座位为空");
+        }
         Map<GSeriesSeatType, Integer> result = new HashMap<>();
         List<GSeriesSeatType> types = new ArrayList<>(TYPE_MAP.keySet());
         for (GSeriesSeatType type : types) {
@@ -117,6 +125,22 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
 
     public boolean[][] initSeatMap(int stationCount) {
         return new boolean[stationCount - 1][BUSINESS_SEAT_MAP.size() + FIRST_CLASS_SEAT_MAP.size() + SECOND_CLASS_SEAT_MAP.size()];
+    }
+
+    public int getSeatNum(){
+        return BUSINESS_SEAT_MAP.size() + FIRST_CLASS_SEAT_MAP.size() + SECOND_CLASS_SEAT_MAP.size();
+    }
+
+    public int getBusinessSeatNum(){
+        return BUSINESS_SEAT_MAP.size();
+    }
+
+    public int getFirstSeatNum(){
+        return FIRST_CLASS_SEAT_MAP.size();
+    }
+
+    public int getSecondSeatNum(){
+        return SECOND_CLASS_SEAT_MAP.size();
     }
 
 }

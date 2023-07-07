@@ -2,6 +2,8 @@ package org.fffd.l23o6.util.strategy.train;
 
 import java.util.*;
 
+import io.github.lyc8503.spring.starter.incantation.exception.BizException;
+import io.github.lyc8503.spring.starter.incantation.exception.CommonErrorType;
 import jakarta.annotation.Nullable;
 import org.fffd.l23o6.pojo.entity.TrainEntity;
 
@@ -100,6 +102,12 @@ public class KSeriesSeatStrategy extends TrainSeatStrategy {
     }
 
     public Map<KSeriesSeatType, Integer> getLeftSeatCount(int startStationIndex, int endStationIndex, boolean[][] seatMap) {
+        if(startStationIndex >= endStationIndex){
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"起点与终点不合法");
+        }
+        if(seatMap == null){
+            throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"座位为空");
+        }
         Map<KSeriesSeatStrategy.KSeriesSeatType, Integer> result = new HashMap<>();
         List<KSeriesSeatStrategy.KSeriesSeatType> types = new ArrayList<>(TYPE_MAP.keySet());
         for (KSeriesSeatStrategy.KSeriesSeatType type : types) {
@@ -123,5 +131,27 @@ public class KSeriesSeatStrategy extends TrainSeatStrategy {
 
     public boolean[][] initSeatMap(int stationCount) {
         return new boolean[stationCount - 1][SOFT_SLEEPER_SEAT_MAP.size() + HARD_SLEEPER_SEAT_MAP.size() + SOFT_SEAT_MAP.size() + HARD_SEAT_MAP.size()];
+    }
+
+
+    public int getSeatNum(){
+        return SOFT_SLEEPER_SEAT_MAP.size() + HARD_SLEEPER_SEAT_MAP.size()
+                + SOFT_SEAT_MAP.size() + HARD_SEAT_MAP.size();
+    }
+
+    public int getSoftSleepSeatNum(){
+        return SOFT_SLEEPER_SEAT_MAP.size();
+    }
+
+    public int getHardSleepSeatNum(){
+        return HARD_SLEEPER_SEAT_MAP.size();
+    }
+
+    public int getSoftSeatNum(){
+        return SOFT_SEAT_MAP.size();
+    }
+
+    public int getHardSeatNum(){
+        return HARD_SEAT_MAP.size();
     }
 }

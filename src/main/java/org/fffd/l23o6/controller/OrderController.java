@@ -42,6 +42,22 @@ public class OrderController {
         return CommonResponse.success(orderService.getOrder(orderId));
     }
 
+//    @PatchMapping("order/{orderId}")
+//    public CommonResponse<?> patchOrder(@PathVariable("orderId") Long orderId, @Valid @RequestBody PatchOrderRequest request) {
+//
+//        switch (request.getStatus()) {
+//            case PAID:
+//                orderService.payOrder(orderId);
+//                break;
+//            case CANCELLED:
+//                orderService.cancelOrder(orderId);
+//                break;
+//            default:
+//                throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS, "Invalid order status.");
+//        }
+//
+//        return CommonResponse.success();
+//    }
 
     @PostMapping("order/{orderId}")
     public CommonResponse<?> payOrder(@PathVariable("orderId") Long orderId,@RequestParam("type") int type) {

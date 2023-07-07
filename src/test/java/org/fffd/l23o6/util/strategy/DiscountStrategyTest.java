@@ -1,12 +1,12 @@
 package org.fffd.l23o6.util.strategy;
 
 import jakarta.annotation.Resource;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DiscountStrategyTest {
+public class DiscountStrategyTest {
     private DiscountStrategy discountStrategy = new DiscountStrategy();
 
     @Test
