@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderVO> listAllOrders() {
-        return orderDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
+        return orderDao.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(OrderMapper.INSTANCE::toOrderVO).collect(Collectors.toList());
     }
 
