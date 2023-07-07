@@ -1,5 +1,6 @@
 package org.fffd.l23o6.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDetailVO> listAllOrders() {
         List<UserVO> users = userDao.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(UserMapper.INSTANCE::toUserVO).collect(Collectors.toList());
-        List<OrderDetailVO> orderDetailVOS = null;
+        List<OrderDetailVO> orderDetailVOS = new ArrayList<>();
         for (UserVO user: users){
             List<OrderVO> orders = listOrders(user.getUsername());
             for(OrderVO orderVO: orders){
