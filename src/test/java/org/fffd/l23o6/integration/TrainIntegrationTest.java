@@ -34,24 +34,35 @@ public class TrainIntegrationTest {
 
     @Test
     public void testGetTrain() {
-        long trainId = 1L;
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long trainId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         TrainDetailVO trainDetailVO = TrainDetailVO.builder().id(trainId).date("2023-07-08")
                 .name("testTrain").build();
         Mockito.when(trainService.getTrain(trainId)).thenReturn(trainDetailVO);
-        Mockito.when(trainService.getTrain(2L)).thenReturn(null);
+        Mockito.when(trainService.getTrain(1001L)).thenReturn(null);
 
         CommonResponse<TrainDetailVO> response = trainController.getTrain(trainId);
         Assertions.assertEquals(trainDetailVO,response.getData());
 
-        response = trainController.getTrain(2L);
+        response = trainController.getTrain(1001L);
         Assertions.assertEquals(null,response.getData());
     }
 
     @Test
     public void testListTrains(){
-        TrainVO trainVO1 = TrainVO.builder().id(1L).name("testTrain1").build();
-        TrainVO trainVO2 = TrainVO.builder().id(2L).name("testTrain2").build();
-        TrainVO trainVO3 = TrainVO.builder().id(3L).name("testTrain3").build();
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long trainId1 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long trainId2 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long trainId3 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
+        TrainVO trainVO1 = TrainVO.builder().id(trainId1).name("testTrain1").build();
+        TrainVO trainVO2 = TrainVO.builder().id(trainId2).name("testTrain2").build();
+        TrainVO trainVO3 = TrainVO.builder().id(trainId3).name("testTrain3").build();
         List<TrainVO> trainVOList = new ArrayList<>();
         trainVOList.add(trainVO1);
         trainVOList.add(trainVO2);
@@ -69,7 +80,7 @@ public class TrainIntegrationTest {
         CommonResponse<List<TrainVO>> response = trainController.listTrains(request);
         Assertions.assertEquals(trainVOList,response.getData());
 
-        long nullId = 3L;
+        long nullId = 1001L;
         date = "";
         Mockito.when(trainService.listTrains(nullId,nullId,date)).thenReturn(null);
 
@@ -82,10 +93,15 @@ public class TrainIntegrationTest {
 
     @Test
     public void testAddTrain(){
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long routeId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         AddTrainRequest request = new AddTrainRequest();
         request.setTrainType(TrainType.HIGH_SPEED);
         request.setName("testTrain");
-        request.setRouteId(1L);
+        request.setRouteId(routeId);
 
         Assertions.assertEquals(200,trainController
                 .addTrain(request).getHttpCode());

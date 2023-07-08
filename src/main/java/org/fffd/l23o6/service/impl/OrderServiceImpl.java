@@ -218,7 +218,6 @@ public class OrderServiceImpl implements OrderService {
             throw new BizException(BizError.ILLEAGAL_ORDER_STATUS);
         }
 
-        // TODO: refund user's money and credits if needed
         if (order.getStatus() == OrderStatus.PAID) {
             // refund credits
             UserEntity user = userDao.findById(order.getUserId()).get();

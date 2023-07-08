@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -33,27 +34,38 @@ public class RouteIntegrationTest {
 
     @Test
     public void testGetRoute() {
-        long routeId = 1L;
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long routeId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         RouteVO routeVO = new RouteVO();
         routeVO.setId(routeId);
         Mockito.when(routeService.getRoute(routeId)).thenReturn(routeVO);
-        Mockito.when(routeService.getRoute(2L)).thenReturn(null);
+        Mockito.when(routeService.getRoute(1001L)).thenReturn(null);
 
         CommonResponse<RouteVO> response = routeController.getRoute(routeId);
         Assertions.assertEquals(routeVO,response.getData());
 
-        response = routeController.getRoute(2L);
+        response = routeController.getRoute(1001L);
         Assertions.assertEquals(null,response.getData());
     }
 
     @Test
     public void testGetRoutes(){
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long routeId1 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long routeId2 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long routeId3 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         RouteVO routeVO1 = new RouteVO();
-        routeVO1.setId(1L);
+        routeVO1.setId(routeId1);
         RouteVO routeVO2 = new RouteVO();
-        routeVO2.setId(2L);
+        routeVO2.setId(routeId2);
         RouteVO routeVO3 = new RouteVO();
-        routeVO3.setId(3L);
+        routeVO3.setId(routeId3);
 
         List<RouteVO> routeVOList = new ArrayList<>();
         routeVOList.add(routeVO1);
@@ -71,10 +83,16 @@ public class RouteIntegrationTest {
         AddRouteRequest request = new AddRouteRequest();
         request.setName("testRoute");
 
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long routeId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
+
         Assertions.assertEquals(200,routeController
-                .editRoute(1L,request).getHttpCode());
+                .editRoute(routeId,request).getHttpCode());
 
         Mockito.verify(routeService, Mockito.times(1)).
-                editRoute(1L,request.getName(),request.getStationIds());
+                editRoute(routeId,request.getName(),request.getStationIds());
     }
 }

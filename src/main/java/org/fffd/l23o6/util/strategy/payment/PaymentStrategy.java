@@ -6,7 +6,6 @@ import java.util.Map;
 
 public abstract class PaymentStrategy {
 
-    // TODO: implement this by adding necessary methods and implement specified strategy
     public abstract void pay(double amount);
 
     public abstract void refund(double amount);

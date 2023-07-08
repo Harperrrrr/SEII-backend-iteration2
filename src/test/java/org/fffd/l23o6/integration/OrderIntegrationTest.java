@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest //启动完整的应用程序上下文
@@ -45,16 +46,20 @@ public class OrderIntegrationTest {
 
     @Test
     public void testGetOrder() {
-        long orderId = 1L;
+        Random random = new Random();
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long orderId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         OrderDetailVO.OrderDetailVOBuilder orderVO = OrderDetailVO.builder();
         orderVO.id(orderId);
         Mockito.when(orderService.getOrder(orderId)).thenReturn(orderVO.build());
-        Mockito.when(orderService.getOrder(2L)).thenReturn(null);
+        Mockito.when(orderService.getOrder(1001L)).thenReturn(null);
 
         CommonResponse<OrderDetailVO> response = orderController.getOrder(orderId);
         Assertions.assertEquals(orderVO.build(),response.getData());
 
-        response = orderController.getOrder(2L);
+        response = orderController.getOrder(1001L);
         Assertions.assertEquals(null,response.getData());
     }
 

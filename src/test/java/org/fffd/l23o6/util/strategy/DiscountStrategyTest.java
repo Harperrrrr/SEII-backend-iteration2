@@ -6,22 +6,44 @@ import org.fffd.l23o6.util.strategy.train.KSeriesSeatStrategy;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DiscountStrategyTest {
     private DiscountStrategy discountStrategy = new DiscountStrategy();
 
     @Test
+    public void invalidArgument(){
+        assertThrows(BizException.class,() ->{
+            discountStrategy.getDiscountWithPoints(-1,100);
+        });
+    }
+    @Test
+    public void equal0(){
+        double[] actual = discountStrategy.getDiscountWithPoints(0,150);
+        double[] expected = {0,0};
+        Assertions.assertArrayEquals(expected,actual);
+    }
+    @Test
     public void below1k(){
-        double[] actual = discountStrategy.getDiscountWithPoints(798,100);
-        double[] expected = {798*0.1*0.01,798};
+        Random random = new Random();
+        int min = 0; // 最小值（包括）
+        int max = 1000; // 最大值（不包括）
+        int randomNumber = random.nextInt(max - min) + min;
+        double[] actual = discountStrategy.getDiscountWithPoints(randomNumber,100);
+        double[] expected = {randomNumber*0.1*0.01,randomNumber};
         Assertions.assertArrayEquals(expected,actual);
     }
 
     @Test
     public void from1kTo3k(){
-        double[] actual = discountStrategy.getDiscountWithPoints(1598,150);
-        double[] expected = {1000*0.1*0.01 + 598*0.15*0.01,1598};
+        Random random = new Random();
+        int min = 1000; // 最小值（包括）
+        int max = 3000; // 最大值（不包括）
+        int randomNumber = random.nextInt(max - min) + min;
+        double[] actual = discountStrategy.getDiscountWithPoints(randomNumber,150);
+        double[] expected = {1000*0.1*0.01 + (randomNumber-1000)*0.15*0.01,randomNumber};
         Assertions.assertArrayEquals(expected,actual);
     }
 
@@ -34,21 +56,33 @@ public class DiscountStrategyTest {
 
     @Test
     public void from3kTo10k(){
-        double[] actual = discountStrategy.getDiscountWithPoints(5598,150);
-        double[] expected = {1000*0.1*0.01 + 2000*0.15*0.01 + 2598*0.2*0.01,5598};
+        Random random = new Random();
+        int min = 3000; // 最小值（包括）
+        int max = 10000; // 最大值（不包括）
+        int randomNumber = random.nextInt(max - min) + min;
+        double[] actual = discountStrategy.getDiscountWithPoints(randomNumber,150);
+        double[] expected = {1000*0.1*0.01 + 2000*0.15*0.01 + (randomNumber-3000)*0.2*0.01,randomNumber};
         Assertions.assertArrayEquals(expected,actual);
     }
 
     @Test
     public void from10kTo50k(){
-        double[] actual = discountStrategy.getDiscountWithPoints(25598,150);
-        double[] expected = {1000*0.1*0.01 + 2000*0.15*0.01 + 7000*0.2*0.01 + 15598*0.25*0.01,25598};
+        Random random = new Random();
+        int min = 10000; // 最小值（包括）
+        int max = 26000; // 最大值（不包括）
+        int randomNumber = random.nextInt(max - min) + min;
+        double[] actual = discountStrategy.getDiscountWithPoints(randomNumber,150);
+        double[] expected = {1000*0.1*0.01 + 2000*0.15*0.01 + 7000*0.2*0.01 + (randomNumber-10000)*0.25*0.01,randomNumber};
         Assertions.assertArrayEquals(expected,actual);
     }
 
     @Test
     public void from10kTo50kWithLowPrice(){
-        double[] actual = discountStrategy.getDiscountWithPoints(49998,100);
+        Random random = new Random();
+        int min = 49000; // 最小值（包括）
+        int max = 50000; // 最大值（不包括）
+        int randomNumber = random.nextInt(max - min) + min;
+        double[] actual = discountStrategy.getDiscountWithPoints(randomNumber,100);
         double[] expected = {100,10000 + 82.0/(0.25*0.01)};
         Assertions.assertArrayEquals(expected,actual);
     }
@@ -72,12 +106,5 @@ public class DiscountStrategyTest {
         double[] actual = discountStrategy.getDiscountWithPoints(168998,150);
         double[] expected = {150,(int)(50000+32/(0.3*0.01))};
         Assertions.assertArrayEquals(expected,actual);
-    }
-
-    @Test
-    public void invalidArgument(){
-        assertThrows(BizException.class,() ->{
-            discountStrategy.getDiscountWithPoints(-1,100);
-        });
     }
 }

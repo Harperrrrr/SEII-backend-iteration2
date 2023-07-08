@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -37,24 +38,35 @@ public class StationIntegrationTest {
 
     @Test
     public void testGetStation() {
-        long stationId = 1L;
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long stationId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         String name = "testStation";
         StationVO stationVO = new StationVO(stationId,name);
         Mockito.when(stationService.getStation(stationId)).thenReturn(stationVO);
-        Mockito.when(stationService.getStation(2L)).thenReturn(null);
+        Mockito.when(stationService.getStation(1001L)).thenReturn(null);
 
         CommonResponse<StationVO> response = stationController.getStation(stationId);
         Assertions.assertEquals(stationVO,response.getData());
 
-        response = stationController.getStation(2L);
+        response = stationController.getStation(1001L);
         Assertions.assertEquals(null,response.getData());
     }
 
     @Test
     public void testListStations(){
-        StationVO stationVO1 = new StationVO(1L,"testStation1");
-        StationVO stationVO2 = new StationVO(2L,"testStation2");
-        StationVO stationVO3 = new StationVO(3L,"testStation3");
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long stationId1 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long stationId2 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+        long stationId3 = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
+        StationVO stationVO1 = new StationVO(stationId1,"testStation1");
+        StationVO stationVO2 = new StationVO(stationId2,"testStation2");
+        StationVO stationVO3 = new StationVO(stationId3,"testStation3");
 
         List<StationVO> stationVOList = new ArrayList<>();
         stationVOList.add(stationVO1);
@@ -72,10 +84,15 @@ public class StationIntegrationTest {
         AddStationRequest request = new AddStationRequest();
         request.setName("testStation");
 
+        Random random = new Random(System.currentTimeMillis());
+        long lowerBound = 1L; // 下限（包括）
+        long upperBound = 1000L; // 上限（不包括）
+        long stationId = lowerBound + (long) (random.nextDouble() * (upperBound - lowerBound));
+
         Assertions.assertEquals(200,stationController
-                .editStation(1L,request).getHttpCode());
+                .editStation(stationId,request).getHttpCode());
 
         Mockito.verify(stationService, Mockito.times(1)).
-                editStation(1L,request.getName());
+                editStation(stationId,request.getName());
     }
 }

@@ -8,6 +8,12 @@ public class DiscountStrategy {
     private static final double[][] DISCOUNT_TABLE = createDiscountTable();
 
     private static double[][] createDiscountTable() {
+        /**
+         * col0 积分档次
+         * col1 到达该档次时已经产生的discount
+         * col2 折扣率
+         * col3 至档次为止所能产生的最大discount
+         */
         double[][] discountTable = {
                 {0, 0, 0.1, 1},
                 {1000, 1, 0.15, 4},

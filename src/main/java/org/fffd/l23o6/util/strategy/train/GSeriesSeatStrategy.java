@@ -71,12 +71,23 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
         }
     }
 
-
+    /**
+     * 1.获取相应坐席类型的map
+     * 2.获取该种坐席对应的所有座位序号
+     * 3.对于每一个序号，遍历所有站点，看是否被占用
+     * 4.若均为被占用，则选中符合条件的座位
+     *
+     * @param startStationIndex
+     * @param endStationIndex
+     * @param type
+     * @param seatMap
+     * @return
+     */
     public @Nullable String allocSeat(int startStationIndex, int endStationIndex, GSeriesSeatType type, boolean[][] seatMap) {
-        //endStationIndex - 1 = upper bound
         if(type.getText().equals("无座")){
             return type.getText();
         }
+
         Map<Integer, String> map = TYPE_MAP.get(type);
         List<Integer> seatCount = new ArrayList<>(map.keySet());
         for (Integer i : seatCount) {
@@ -95,6 +106,16 @@ public class GSeriesSeatStrategy extends TrainSeatStrategy {
         return null;
     }
 
+    /**
+     * 1. 获取坐席类型集合types
+     * 2. 遍历types，对于每一个type，获取对应的作为序号集合
+     * 3. 遍历序号集合，对于每一个序号，遍历起点到终点站
+     * 4. 若均未被占用，leftCount++
+     * @param startStationIndex
+     * @param endStationIndex
+     * @param seatMap
+     * @return
+     */
     public Map<GSeriesSeatType, Integer> getLeftSeatCount(int startStationIndex, int endStationIndex, boolean[][] seatMap) {
         if(seatMap == null){
             throw new BizException(CommonErrorType.ILLEGAL_ARGUMENTS,"座位为空");

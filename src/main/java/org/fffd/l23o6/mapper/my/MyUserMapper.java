@@ -1,4 +1,4 @@
-package org.fffd.l23o6.mapper;
+package org.fffd.l23o6.mapper.my;
 
 import lombok.RequiredArgsConstructor;
 import org.fffd.l23o6.pojo.entity.UserEntity;
